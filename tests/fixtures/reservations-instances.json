@@ -1,0 +1,86 @@
+{
+  "Reservations": [
+    {
+      "Instances": [
+        {
+          "PublicIpAddress": "100.0.0.1",
+          "PrivateIpAddress": "10.0.0.1",
+          "ProductCodes": [],
+          "VpcId": "vpc-0123456789",
+          "StateTransitionReason": "User initiated (2018-01-01 00:00:00 GMT)",
+          "InstanceId": "i-0123456789",
+          "ImageId": "ami-0123456789",
+          "PrivateDnsName": "ip-10-0-0-0.eu-west-2.compute.internal",
+          "KeyName": "keyname-1",
+          "SecurityGroups": [
+            {
+              "GroupName": "sg-1",
+              "GroupId": "sg-0123456789"
+            }
+          ],
+          "ClientToken": "",
+          "SubnetId": "subnet-0123456789",
+          "InstanceType": "t2.micro",
+          "IamInstanceProfile": {
+            "Id": "AIPABCDEFGHIJK",
+            "Arn": "arn:aws:iam::0123456789:instance-profile/role-iam-0123456789"
+          },
+          "Tags": [
+            {
+              "Value": "my-app-1",
+              "Key": "Name"
+            },
+            {
+              "Value": "staging",
+              "Key": "environment"
+            }
+          ]
+        }
+      ],
+      "ReservationId": "r-0123456789",
+      "Groups": [],
+      "OwnerId": "0123456789"
+    },
+    {
+      "Instances": [
+        {
+          "PublicIpAddress": "100.0.0.2",
+          "PrivateIpAddress": "10.0.0.2",
+          "ProductCodes": [],
+          "VpcId": "vpc-012345678a",
+          "StateTransitionReason": "User initiated (2018-01-02 00:00:00 GMT)",
+          "InstanceId": "i-012345678a",
+          "ImageId": "ami-012345678a",
+          "PrivateDnsName": "ip-10-0-0-2.eu-west-2.compute.internal",
+          "KeyName": "keyname-2",
+          "SecurityGroups": [
+            {
+              "GroupName": "sg-2",
+              "GroupId": "sg-012345678a"
+            }
+          ],
+          "ClientToken": "",
+          "SubnetId": "subnet-012345678a",
+          "InstanceType": "t2.micro",
+          "IamInstanceProfile": {
+            "Id": "AIPABCDEFGHIJL",
+            "Arn": "arn:aws:iam::012345678a:instance-profile/role-iam-012345678a"
+          },
+          "Tags": [
+            {
+              "Value": "my-app-2",
+              "Key": "Name"
+            },
+            {
+              "Value": "staging",
+              "Key": "environment"
+            }
+          ]
+        }
+      ],
+      "ReservationId": "r-012345678a",
+      "Groups": [],
+      "OwnerId": "012345678a"
+    }
+  ]
+}

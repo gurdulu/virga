@@ -1,0 +1,23 @@
+output-format: text
+
+strictness: high
+test-warnings: false
+doc-warnings: true
+
+pep257:
+  disable:
+    - D100
+    - D104
+    - D203
+    - D212
+
+pep8:
+  disable:
+    - N802
+  options:
+    max-line-length: 120
+
+pylint:
+  disable:
+    - missing-docstring
+    - line-too-long

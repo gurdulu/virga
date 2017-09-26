@@ -1,0 +1,5 @@
+include requirements.txt
+include README.rst
+include docs/*.rst
+include LICENSE.txt
+include virga/providers/*.yaml

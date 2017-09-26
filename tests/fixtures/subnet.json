@@ -1,0 +1,24 @@
+{
+  "Subnets": {
+    "AvailabilityZone": "eu-west-2a",
+    "AvailableIpAddressCount": 248,
+    "CidrBlock": "10.0.0.0/24",
+    "DefaultForAz": false,
+    "MapPublicIpOnLaunch": true,
+    "State": "available",
+    "SubnetId": "subnet-0123456789",
+    "VpcId": "vpc-0123456789",
+    "AssignIpv6AddressOnCreation": false,
+    "Ipv6CidrBlockAssociationSet": [],
+    "Tags": [
+      {
+        "Key": "environment",
+        "Value": "staging"
+      },
+      {
+        "Key": "Name",
+        "Value": "my-subnet"
+      }
+    ]
+  }
+}
