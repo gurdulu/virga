@@ -7,6 +7,7 @@ import re
 import datetime
 import sys
 import jmespath
+import unicodedata
 import yaml
 
 from virga import VirgaException
@@ -222,12 +223,22 @@ class AbstractProvider(object):
         :param resource: Resource to dump
         :param resource_id: Resource ID
         """
+        def slugify(value, allow_unicode=False):
+            """Thanks Django (https://www.djangoproject.com/) always inspiring."""
+            value = str(value)
+            if allow_unicode:
+                value = unicodedata.normalize('NFKC', value)
+            else:
+                value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore').decode('ascii')
+            value = re.sub(r'[^\w\s-]', '', value).strip().lower()
+            return re.sub(r'[-\s]+', '-', value)
+
         def handler(obj):
             if isinstance(obj, datetime.datetime):
                 return obj.isoformat()
             return obj
         if self.args.output is not None:
-            with open('%s/%s.json' % (self.args.output, resource_id), 'w') as p_file:
+            with open('%s/%s.json' % (self.args.output, slugify(resource_id)), 'w') as p_file:
                 json.dump(resource, p_file, indent=2, default=handler)
 
     def assertion(self, test: str, context: str, resource: dict, resource_id: str) -> dict:
@@ -251,7 +262,7 @@ class AbstractProvider(object):
         result = jmespath.search(test, resource)
         success = self.outcome(result)
         message = '%s: %s eval %s == %s' % (resource_id, test, str(result), success)
-        self.logger.debug(logging.DEBUG, message)
+        self.logger.debug(message)
 
         outcome = {
             'message': 'Context: %(context)s - ID: %(resource)s - Test: %(test)s' % dict(
