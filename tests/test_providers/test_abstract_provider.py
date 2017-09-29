@@ -248,7 +248,7 @@ class TestAbstractProvider(TestCase):
     @patch('logging.Logger.debug')
     def test_assertion_call_debug(self, mock_debug):
         self.provider.assertion('AnyKey==`any-value`', 'Context', {}, 'resource-id')
-        mock_debug.assert_called_once_with(10, 'resource-id: AnyKey==`any-value` eval False == False')
+        mock_debug.assert_called_once_with('resource-id: AnyKey==`any-value` eval False == False')
 
     @patch('virga.providers.AbstractProvider.outcome')
     def test_assertion_call_outcome(self, mock_outcome):

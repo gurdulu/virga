@@ -53,3 +53,11 @@ db_instances:
   resource_id: DBInstanceIdentifier
   identifiers:
     id: db-instance-id
+certificates:
+  client: virga
+  action: find_certificate
+  context: ACM Certificates
+  prefix: Certificate
+  resource_id: CertificateArn
+  identifiers:
+    domain_name: domain-name
