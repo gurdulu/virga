@@ -16,8 +16,8 @@ What is Virga
 From `Wikipedia <https://en.wikipedia.org/wiki/Virga>`_: *"In meteorology, Virga is an observable streak or shaft of
 precipitation falling from a cloud that evaporates or sublimates before reaching the ground."*
 
-This piece of software is not about a weather phenomenon. In this context Virga is a tool for analysing your Cloud
-infrastructure before the rain reaches the ground.
+This piece of software is not about a weather phenomenon. Virga is a tool for analysing your Cloud infrastructure
+before the rain reaches the ground.
 
 ----------------------------------
 This project is still in pre-alpha
@@ -54,17 +54,41 @@ Quick start
 -----------
 
 1. Install Virga :code:`pip install virga`
-2. Edit the file ``template.yaml``
-3. :code:`virga template.yaml`
+2. Create the file ``tests.yaml``
+3. :code:`virga tests.yaml`
 
 
-``template.yaml`` is the `Configuration files`_.
+``tests.yaml`` is the `Tests definition file`_.
 
 -------
 Options
 -------
 
-See `This project is still in pre-alpha`_
+Following the list of options of Virga
+
+.. code::bash
+
+    usage: virga [-h] [-definition DEFINITION] [-logfile LOGFILE] [-debug] [-silent] [-output OUTPUT] config
+
+    positional arguments:
+      config                  test definition file
+
+    optional arguments:
+      -h, --help              show this help message and exit
+      -definition DEFINITION  definition file
+      -logfile LOGFILE        log file
+      -output OUTPUT          resource output directory
+      -silent                 do not output results
+      -debug                  show debug
+
+The option ``-definition`` is necessary only if the standard definition file has been modified.
+
+By default the logs are outputted to the stdout. ``-logfile`` redirect the log stream to a file instead.
+
+``-output`` saves the information about the single resources in a directory for testing purposes.
+
+``-silent`` sets the level for the log to CRITICAL and ``-debug`` sets the level to DEBUG  (see
+`Logging facility for Python <https://docs.python.org/3/library/logging.html>`_).
 
 -------------------
 Configuration files
@@ -109,15 +133,15 @@ The **definitions** describe the way we want to obtain information about a speci
 In the piece of code above (see `<virga/providers/aws.yaml>`_) we say that for the ``subnets`` section we are going to
 instantiate a *client* and invoke an *action* identifying the resources we want to filter with **id** or with **name**.
 
-The same concept is applied to the ``instances``.
+The same concept is applied to the ``instances`` section.
 
 This configuration file is unlikely to be changed as contains information depending on the underlying library (in this
 case boto3_) but in case we want to add new sections or defining different identifiers, we can use the provided file
 as template and override the default definition file with the option ``-definition``.
 
 
-Tests
-=====
+Tests definition file
+=====================
 
 An example is worth 1000 words.
 
@@ -157,24 +181,35 @@ The ``provider`` section specify the parameters for connecting our client to AWS
 The ``tests`` section declares two scopes for the tests: ``subnets`` and ``instances`` and the resources are
 identified with the ``subnet-id`` for the subnet and with the ``tag:Name`` for the EC2 instances.
 
-The ``assertions`` are the actual tests: each item represents a condition to verify using the query language JMESPath_.
-
-The only exception is the last assertion
+The ``assertions`` are the actual tests: each item represents a condition to verify using the query language
+JMESPath_. The only exception is the last assertion
 
 .. code::yaml
 
     SubnetId=="_lookup('subnets', 'name', 'my-subnet')"
 
-``_lookup`` is a Virga function that returns the subnet ID from:
-
-* the context
-* the identifier (eg. name or id)
-* the value to search
+``_lookup`` is not a standard JMESPath construct but a Virga function (see `_lookup function`_).
 
 _lookup function
 ================
 
-See `This project is still in pre-alpha`_
+The ``_lookup`` function filters a single resource returning the ID.
+
+In the example above instead of declaring the equality
+
+.. code::yaml
+
+    SubnetId=="subnet-0123456789"
+
+we have filtered the subnet with the tag:Name equals to *my-subnet*.
+
+The argument passed to the function are:
+
+* the context
+* the identifier (eg. *name* or *id*)
+* the value to search
+
+If no result is found, the test fails.
 
 ---
 FAQ
