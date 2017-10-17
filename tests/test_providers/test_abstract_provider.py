@@ -231,28 +231,28 @@ class TestAbstractProvider(TestCase):
 
     @patch('virga.providers.AbstractProvider.output')
     def test_assertion_call_output(self, mock_output):
-        self.provider.assertion('AnyKey==`any-value`', 'Context', {}, 'resource-id')
+        self.provider.assertion("AnyKey=='any-value'", 'Context', {}, 'resource-id')
         mock_output.assert_called_once_with({}, 'resource-id')
 
     @patch('virga.providers.AbstractProvider._lookup')
     def test_assertion_call_lookup(self, mock_lookup):
-        mock_lookup.return_value = 'AnyKey==`any-value`'
-        self.provider.assertion('AnyKey==`any-value`', 'Context', {}, 'resource-id')
-        mock_lookup.assert_called_once_with('AnyKey==`any-value`')
+        mock_lookup.return_value = "AnyKey=='any-value'"
+        self.provider.assertion("AnyKey=='any-value'", 'Context', {}, 'resource-id')
+        mock_lookup.assert_called_once_with("AnyKey=='any-value'")
 
     @patch('jmespath.search')
     def test_assertion_call_search(self, mock_search):
-        self.provider.assertion('AnyKey==`any-value`', 'Context', {}, 'resource-id')
-        mock_search.assert_called_once_with('AnyKey==`any-value`', {})
+        self.provider.assertion("AnyKey=='any-value'", 'Context', {}, 'resource-id')
+        mock_search.assert_called_once_with("AnyKey=='any-value'", {})
 
     @patch('logging.Logger.debug')
     def test_assertion_call_debug(self, mock_debug):
-        self.provider.assertion('AnyKey==`any-value`', 'Context', {}, 'resource-id')
-        mock_debug.assert_called_once_with('resource-id: AnyKey==`any-value` eval False == False')
+        self.provider.assertion("AnyKey=='any-value'", 'Context', {}, 'resource-id')
+        mock_debug.assert_called_once_with("resource-id: AnyKey=='any-value' eval False == False")
 
     @patch('virga.providers.AbstractProvider.outcome')
     def test_assertion_call_outcome(self, mock_outcome):
-        self.provider.assertion('AnyKey==`any-value`', 'Context', {}, 'resource-id')
+        self.provider.assertion("AnyKey=='any-value'", 'Context', {}, 'resource-id')
         mock_outcome.assert_called_once_with(False)
 
     def test_validate_no_params(self):
