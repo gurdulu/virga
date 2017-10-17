@@ -4,7 +4,7 @@ from unittest.mock import patch, call
 from botocore.exceptions import ParamValidationError, ClientError
 
 from tests import MockArgParse, fixture
-from virga import VirgaException
+from virga.exceptions import VirgaException
 from virga.providers.aws import Provider
 
 

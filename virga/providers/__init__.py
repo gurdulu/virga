@@ -10,7 +10,7 @@ import jmespath
 import unicodedata
 import yaml
 
-from virga import VirgaException
+from virga.exceptions import VirgaException
 
 ERROR = 40
 SUCCESS = 20

@@ -8,7 +8,7 @@ import jmespath
 
 from botocore.exceptions import ParamValidationError, ClientError
 
-from virga import VirgaException
+from virga.exceptions import VirgaException
 from virga.providers import AbstractProvider
 
 

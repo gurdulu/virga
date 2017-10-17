@@ -7,7 +7,7 @@ from unittest.mock import patch, mock_open, call
 
 from tests import MockArgParse, fixture
 from tests.test_providers import MockProvider
-from virga import VirgaException
+from virga.exceptions import VirgaException
 from virga.providers import AbstractProvider, SUCCESS
 
 
