@@ -16,7 +16,7 @@ from virga.asserts import parser  # NOQA
 from virga.exceptions import VirgaException  # NOQA
 
 
-class TestVirga(TestCase):
+class TestVirgaAsserts(TestCase):
 
     @patch('argparse.ArgumentParser.parse_args')
     @patch('argparse.ArgumentParser.add_argument')

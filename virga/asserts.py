@@ -12,7 +12,6 @@ def parser() -> any:
     Argument definition and parsing.
 
     :return: Arguments
-    :rtype: Any
     """
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('config', help='Test configuration file')
