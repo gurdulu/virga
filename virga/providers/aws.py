@@ -1,12 +1,8 @@
-import uuid
-
 from multiprocessing import Manager, Process
 import os
 import boto3
 
 import jmespath
-
-from botocore.exceptions import ParamValidationError, ClientError
 
 from virga.exceptions import VirgaException
 from virga.providers import AbstractProvider
@@ -24,22 +20,6 @@ class Provider(AbstractProvider):
         self.role = {}
         self.definition_file = os.path.join(os.path.dirname(__file__), 'aws.yaml')
 
-    def assume_role(self):
-        """Generate temporary credentials with STS assume role."""
-        try:
-            role_arn = self.config['provider']['extra']['role_arn']
-            sts = boto3.client('sts')
-            response = sts.assume_role(RoleArn=role_arn, RoleSessionName=str(uuid.uuid4()))
-            self.role['aws_access_key_id'] = response['Credentials']['AccessKeyId']
-            self.role['aws_secret_access_key'] = response['Credentials']['SecretAccessKey']
-            self.role['aws_session_token'] = response['Credentials']['SessionToken']
-        except KeyError:
-            self.logger.debug('Role ARN not set')
-        except ParamValidationError:
-            raise VirgaException('Role ARN not valid')
-        except ClientError as exc:
-            raise VirgaException('Assume role client exception: %s' % str(exc))
-
     def process(self, resource_section: str, resource_object: dict, shared_messages: list) -> Process:
         """
         Start and return the process.
@@ -55,28 +35,6 @@ class Provider(AbstractProvider):
         process = Process(target=self.evaluate, args=(resource_object, resource_definition, shared_messages))
         process.start()
         return process
-
-    def launch_tests(self):
-        """
-        Launch the battery of tests.
-
-        Requests are sent using the `request` method which starts a separated process.
-        When the processes are all concluded, the outcome is logged.
-        """
-        jobs = []
-
-        with Manager() as manager:
-            shared_messages = manager.list()
-            for resource_section, resource_objects in self.config.get('tests', {}).items():
-                for resource_object in resource_objects:
-                    process = self.process(resource_section, resource_object, shared_messages)
-                    jobs.append(process)
-
-            for job in jobs:
-                job.join()
-
-            self.logs(shared_messages)
-            self.result(shared_messages)
 
     def client(self, resource_definition: dict, resource_object: dict) -> dict:
         """
@@ -133,9 +91,27 @@ class Provider(AbstractProvider):
                 shared_messages.append(outcome)
 
     def action(self):
-        """Entry point of the launch for the Provider."""
-        self.assume_role()
-        self.launch_tests()
+        """
+        Entry point of the launch for the Provider.
+
+        Launch the battery of tests.
+        Requests are sent using the `request` method which starts a separated process.
+        When the processes are all concluded, the outcome is logged.
+        """
+        jobs = []
+
+        with Manager() as manager:
+            shared_messages = manager.list()
+            for resource_section, resource_objects in self.config.get('tests', {}).items():
+                for resource_object in resource_objects:
+                    process = self.process(resource_section, resource_object, shared_messages)
+                    jobs.append(process)
+
+            for job in jobs:
+                job.join()
+
+            self.logs(shared_messages)
+            self.result(shared_messages)
 
     @staticmethod
     def format_filters(definition: dict, test: dict) -> list:

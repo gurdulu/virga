@@ -1,8 +1,6 @@
 from unittest import TestCase
 from unittest.mock import patch, call
 
-from botocore.exceptions import ParamValidationError, ClientError
-
 from tests import MockArgParse, fixture
 from virga.exceptions import VirgaException
 from virga.providers.aws import Provider
@@ -22,36 +20,6 @@ class TestAWS(TestCase):
                 'SessionToken': 'session_token',
             }
         }
-
-    def test_assume_role_fills_role_attribute(self, mock_call):
-        self.provider.config = {'provider': {'extra': {'role_arn': 'any'}}}
-        mock_call.return_value = self.valid_credentials
-        expected = {
-            'aws_access_key_id': 'access_key_id',
-            'aws_secret_access_key': 'secret_access_key',
-            'aws_session_token': 'session_token'
-        }
-        self.provider.assume_role()
-        self.assertDictEqual(expected, self.provider.role)
-
-    def test_assume_role_with_empty_role_arn(self, *args):
-        self.provider.config = {}
-        self.provider.assume_role()
-        self.assertDictEqual({}, self.provider.role)
-
-    def test_assume_role_with_invalid_role_arn(self, mock_call):
-        self.provider.config = {'provider': {'extra': {'role_arn': 'any'}}}
-        mock_call.return_value = self.valid_credentials
-        mock_call.side_effect = ParamValidationError(report='test')
-        with self.assertRaisesRegex(VirgaException, 'Role ARN not valid'):
-            self.provider.assume_role()
-
-    def test_assume_role_with_client_error(self, mock_call):
-        self.provider.config = {'provider': {'extra': {'role_arn': 'any'}}}
-        mock_call.return_value = self.valid_credentials
-        mock_call.side_effect = ClientError({'code': 400}, 'assume_role')
-        with self.assertRaisesRegex(VirgaException, 'Assume role client exception'):
-            self.provider.assume_role()
 
     def test_lookup_success(self, mock_call):
         mock_call.return_value = fixture('subnet.json', get_json=True)
@@ -80,13 +48,6 @@ class TestAWS(TestCase):
         test = {'another-key': 'resource-name'}
         with self.assertRaisesRegex(VirgaException, 'Invalid configuration'):
             self.provider.format_filters(definition, test)
-
-    @patch('virga.providers.aws.Provider.launch_tests')
-    @patch('virga.providers.aws.Provider.assume_role')
-    def test_action_calls_assume_role_and_launch_tests(self, mock_assume_role, mock_launch_tests, *args):
-        self.provider.action()
-        mock_assume_role.assert_called_with()
-        mock_launch_tests.assert_called_with()
 
     def test_evaluate_no_assertions_calls_aws(self, mock_call):
         test = {
@@ -168,5 +129,5 @@ class TestAWS(TestCase):
     @patch('virga.providers.aws.Provider.process')
     def test_launch_tests(self, mock_process, *args):
         self.provider.config = fixture('config.yaml', get_yaml=True)
-        self.provider.launch_tests()
+        self.provider.action()
         self.assertEqual(3, mock_process.call_count)
