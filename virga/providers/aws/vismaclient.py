@@ -1,13 +1,12 @@
 import boto3
 
-from virga import VirgaException
+from virga.exceptions import VirgaException
 
 
 class VismaClient(object):
 
-    def __init__(self, params, role):
+    def __init__(self, params):
         self.params = params
-        self.role = role
 
     def find_certificate(self, resource_definition: dict, resource_object: dict) -> dict:
         """
@@ -17,7 +16,7 @@ class VismaClient(object):
         :param resource_object: Object filter
         :return: Response from AWS
         """
-        client = boto3.client('acm', **self.params, **self.role)
+        client = boto3.client('acm', **self.params)
         certificates = client.list_certificates()
         try:
             res_certificates = [

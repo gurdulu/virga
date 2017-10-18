@@ -18,7 +18,6 @@ class Provider(AbstractProvider):
             'region_name',
         ]
         self.params = config['provider'].get('params', {})
-        self.role = {}
         self.definition_file = os.path.join(os.path.dirname(__file__), 'aws.yaml')
 
     def process(self, resource_section: str, resource_object: dict, shared_messages: list) -> Process:
@@ -49,10 +48,10 @@ class Provider(AbstractProvider):
         :return: Response from AWS
         """
         if resource_definition['client'] == 'virga':
-            client = VismaClient(self.params, self.role)
+            client = VismaClient(self.params)
             return getattr(client, resource_definition['action'])(resource_definition, resource_object)
         else:
-            client = boto3.client(resource_definition['client'], **self.params, **self.role)
+            client = boto3.client(resource_definition['client'], **self.params)
             filters = self.format_filters(resource_definition, resource_object)
             return getattr(client, resource_definition['action'])(Filters=filters)
 
