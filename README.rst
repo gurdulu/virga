@@ -162,8 +162,6 @@ According to the definition, our ``test.yaml`` will be
       name: aws
       params:
         region_name: eu-west-2
-      extra:
-        role_arn: arn:aws:iam::0123456789:role/Tests
     tests:
       subnets:
         - id: subnet-0123456789
