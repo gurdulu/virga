@@ -60,7 +60,7 @@ def get_provider_class(config: dict, args: any) -> any:
         raise VirgaException('Provider class not found')
 
 
-def virga():
+def asserts():
     """
     The real deal.
 

@@ -11,8 +11,7 @@ from tests import fixtures, MockArgParse, MockProvider
 
 sys.modules['virga.providers.provider_not_there'] = __import__('unittest.mock')
 
-from virga import virga  # NOQA
-from virga.asserts import parser  # NOQA
+from virga.asserts import asserts, parser  # NOQA
 from virga.exceptions import VirgaException  # NOQA
 
 
@@ -35,7 +34,7 @@ class TestVirgaAsserts(TestCase):
     @patch('virga.asserts.get_provider_class')
     def test_virga_function_invoke_parser_and_read_config(self, mock_get_provider_class, mock_read_config, mock_parser):
         mock_read_config.return_value = {'provider': 'aws'}
-        virga()
+        asserts()
         mock_parser.assert_called_once_with()
         mock_read_config.assert_called_once()
         mock_get_provider_class.assert_called_once()
@@ -44,13 +43,13 @@ class TestVirgaAsserts(TestCase):
     def test_not_existing_configuration_file_raise_virga_exc(self, mock_parser):
         mock_parser.return_value = MockArgParse(config='file-not-here.yaml')
         with self.assertRaisesRegex(VirgaException, 'Configuration file not found'):
-            virga()
+            asserts()
 
     @patch('virga.asserts.parser')
     def test_invalid_configuration_file_raise_virga_exc(self, mock_parser):
         mock_parser.return_value = MockArgParse(config=os.path.join(fixtures, 'invalid.yaml'))
         with self.assertRaisesRegex(VirgaException, 'Invalid configuration file'):
-            virga()
+            asserts()
 
     @patch('virga.asserts.parser')
     @patch('virga.asserts.read_config')
@@ -58,7 +57,7 @@ class TestVirgaAsserts(TestCase):
         mock_parser.return_value = MockArgParse(config=None)
         mock_read_config.return_value = {'provider': None}
         with self.assertRaisesRegex(VirgaException, 'Provider missing'):
-            virga()
+            asserts()
 
     @patch('virga.asserts.parser')
     @patch('virga.asserts.read_config')
@@ -66,7 +65,7 @@ class TestVirgaAsserts(TestCase):
         mock_parser.return_value = MockArgParse(config=None)
         mock_read_config.return_value = {'provider': {'name': 'module_not_there'}}
         with self.assertRaisesRegex(VirgaException, 'Provider module not found'):
-            virga()
+            asserts()
 
     @patch('virga.asserts.parser')
     @patch('virga.asserts.read_config')
@@ -74,13 +73,13 @@ class TestVirgaAsserts(TestCase):
         mock_parser.return_value = MockArgParse(config=None)
         mock_read_config.return_value = {'provider': {'name': 'provider_not_there'}}
         with self.assertRaisesRegex(VirgaException, 'Provider class not found'):
-            virga()
+            asserts()
 
     @patch('virga.asserts.parser')
     @patch('virga.asserts.read_config')
     @patch('virga.asserts.get_provider_class')
     def test_virga_invokes_provider_validate_and_action(self, get_provider_class, *args):
         get_provider_class.return_value = MockProvider()
-        virga()
+        asserts()
         get_provider_class.return_value.validate.assert_called_once_with()
         get_provider_class.return_value.action.assert_called_once_with()
