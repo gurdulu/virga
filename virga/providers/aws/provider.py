@@ -6,6 +6,7 @@ import jmespath
 
 from virga.exceptions import VirgaException
 from virga.providers import AbstractProvider
+from virga.providers.aws.vismaclient import VismaClient
 
 
 class Provider(AbstractProvider):
@@ -48,31 +49,12 @@ class Provider(AbstractProvider):
         :return: Response from AWS
         """
         if resource_definition['client'] == 'virga':
-            return getattr(self, resource_definition['action'])(resource_definition, resource_object)
+            client = VismaClient(self.params, self.role)
+            return getattr(client, resource_definition['action'])(resource_definition, resource_object)
         else:
             client = boto3.client(resource_definition['client'], **self.params, **self.role)
             filters = self.format_filters(resource_definition, resource_object)
             return getattr(client, resource_definition['action'])(Filters=filters)
-
-    def find_certificate(self, resource_definition: dict, resource_object: dict) -> dict:
-        """
-        Call boto3/acm for finding the certificate for the passed domain.
-
-        :param resource_definition: Section definition
-        :param resource_object: Object filter
-        :return: Response from AWS
-        """
-        client = boto3.client('acm', **self.params, **self.role)
-        certificates = client.list_certificates()
-        try:
-            res_certificates = [
-                cert for cert in certificates['CertificateSummaryList']
-                if cert['DomainName'] == resource_object['domain_name']
-            ]
-            return client.describe_certificate(CertificateArn=res_certificates[0]['CertificateArn'])
-        except (KeyError, IndexError):
-            raise VirgaException(
-                'Lookup %s %s %s failed' % ('certificates', 'domain_name', resource_object['domain_name']))
 
     def evaluate(self, resource_object: dict, resource_definition: dict, shared_messages: list):
         """
