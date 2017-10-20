@@ -1,10 +1,10 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from virga.templates import parser
+from virga.samples import parser
 
 
-class TestVirgaTemplates(TestCase):
+class TestVirgaSamples(TestCase):
 
     @patch('argparse.ArgumentParser.parse_args')
     @patch('argparse.ArgumentParser.add_argument')
