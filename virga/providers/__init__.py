@@ -10,7 +10,6 @@ import jmespath
 import unicodedata
 import yaml
 
-from virga.exceptions import VirgaException
 
 ERROR = 40
 SUCCESS = 20
@@ -25,12 +24,11 @@ class AbstractProvider(object):
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, config: dict, args: any):  # NOQA
-        self.config = config
-        self._logger = None
+    def __init__(self, tests: dict, args: any):  # NOQA
+        self.tests = tests
         self.args = args
-        self.required_params = None
         self.definition_file = None
+        self._logger = None
         self._definition = None
 
     @abc.abstractmethod
@@ -59,40 +57,11 @@ class AbstractProvider(object):
         """
         raise NotImplementedError('Implement lookup method')
 
-    def get_required_params(self) -> list:
-        """Workaround for having an abstract property."""
-        if self.required_params is None:
-            raise NotImplementedError('Implement required_params property')
-        return self.required_params
-
     def get_definition_file(self) -> str:
         """Workaround for having an abstract property."""
         if self.definition_file is None:
             raise NotImplementedError('Implement definition_file property')
         return self.definition_file
-
-    def validate(self):
-        """
-        Check that the configuration has the required parameter set.
-
-        :raises VirgaException: If the configuration is wrong.
-        """
-        try:
-            config_params = self.config['provider']['params']
-        except KeyError:
-            raise VirgaException('Configuration error')
-        errors = []
-        for param in self.get_required_params():
-            if isinstance(param, str) and param not in config_params.keys():
-                errors.append('"%s" is required' % param)
-            elif isinstance(param, list):
-                valids = len([y for y in param if y in config_params.keys()])
-                if valids == 0:
-                    errors.append("%s is required" % ' or '.join(param))
-                elif valids > 1:
-                    errors.append("either %s must be set" % ' or '.join(param))
-        if errors:
-            raise VirgaException('Configuration issues: %s' % ', '.join(errors))
 
     def read_definition(self) -> dict:
         """Read the definition."""

@@ -5,9 +5,6 @@ from virga.exceptions import VirgaException
 
 class VismaClient(object):
 
-    def __init__(self, params):
-        self.params = params
-
     def find_certificate(self, resource_definition: dict, resource_object: dict) -> dict:
         """
         Call boto3/acm for finding the certificate for the passed domain.
@@ -16,7 +13,7 @@ class VismaClient(object):
         :param resource_object: Object filter
         :return: Response from AWS
         """
-        client = boto3.client('acm', **self.params)
+        client = boto3.client('acm')
         certificates = client.list_certificates()
         try:
             res_certificates = [

@@ -6,7 +6,6 @@ from unittest.mock import patch, mock_open
 from tests import MockArgParse, MockProvider, fixture
 
 # https://stackoverflow.com/questions/8658043/how-to-mock-an-import
-
 sys.modules['virga.providers.provider_not_there'] = __import__('unittest.mock')
 
 from virga.asserts import asserts, parser, read_test_file, get_provider_class  # NOQA
@@ -21,7 +20,6 @@ class TestVirgaAsserts(TestCase):
         parser()
         mock_add_argument.assert_any_call('provider', help='Provider')
         mock_add_argument.assert_any_call('test_file', help='Test configuration file')
-        mock_add_argument.assert_any_call('-p', '--param', nargs='*', help='Provider parameters (format key=value)')
         mock_add_argument.assert_any_call('-d', '--definition', help='Definition file')
         mock_add_argument.assert_any_call('-l', '--logfile', help='Log file')
         mock_add_argument.assert_any_call('-s', '--silent', help='Do not output results', action='store_true', default=False)
@@ -67,5 +65,4 @@ class TestVirgaAsserts(TestCase):
     def test_virga_invokes_provider_validate_and_action(self, get_provider_class, *args):
         get_provider_class.return_value = MockProvider()
         asserts()
-        get_provider_class.return_value.validate.assert_called_once_with()
         get_provider_class.return_value.action.assert_called_once_with()

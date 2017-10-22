@@ -7,7 +7,6 @@ from unittest.mock import patch, mock_open, call
 
 from tests import MockArgParse, fixture
 from tests.test_providers import MockProvider
-from virga.exceptions import VirgaException
 from virga.providers import AbstractProvider, SUCCESS
 
 
@@ -254,55 +253,6 @@ class TestAbstractProvider(TestCase):
     def test_assertion_call_outcome(self, mock_outcome):
         self.provider.assertion("AnyKey=='any-value'", 'Context', {}, 'resource-id')
         mock_outcome.assert_called_once_with(False)
-
-    def test_validate_no_params(self):
-        class Provider(AbstractProvider):
-            def lookup(self, section, identifier, resource_id):
-                pass
-
-            def action(self):
-                pass
-
-        provider = Provider({}, None)
-        with self.assertRaisesRegex(VirgaException, 'Configuration error'):
-            provider.validate()
-
-    def test_validate_no_required_params(self):
-        class Provider(AbstractProvider):
-            def lookup(self, section, identifier, resource_id):
-                pass
-
-            def action(self):
-                pass
-
-        provider = Provider({'provider': {'params': {}}}, None)
-        with self.assertRaisesRegex(NotImplementedError, 'Implement required_params property'):
-            provider.validate()
-
-    def test_validate_param_string(self):
-        self.provider.config = {'provider': {'params': {}}}
-        self.provider.required_params = ['param1']
-        with self.assertRaisesRegex(VirgaException, '"param1" is required'):
-            self.provider.validate()
-
-    def test_validate_param_list_not_set(self):
-        self.provider.config = {'provider': {'params': {}}}
-        self.provider.required_params = [['param1', 'param2']]
-        with self.assertRaisesRegex(VirgaException, 'param1 or param2 is required'):
-            self.provider.validate()
-
-    def test_validate_param_list_all_set(self):
-        self.provider.required_params = [['param1', 'param2']]
-        self.provider.config = {
-            'provider': {
-                'params': {
-                    'param1': 1,
-                    'param2': 1,
-                }
-            }
-        }
-        with self.assertRaisesRegex(VirgaException, 'either param1 or param2 must be set'):
-            self.provider.validate()
 
     @patch('builtins.open', new_callable=mock_open, read_data=fixture('bare-definition.yaml'))
     def test_definition_file(self, *args):

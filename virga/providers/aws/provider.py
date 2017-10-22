@@ -12,12 +12,8 @@ from virga.providers.aws.vismaclient import VismaClient
 class Provider(AbstractProvider):
     """Implementation of AWS provider class."""
 
-    def __init__(self, config: dict, args: any):  # NOQA
-        super(Provider, self).__init__(config, args)
-        self.required_params = [
-            'region_name',
-        ]
-        self.params = config['provider'].get('params', {})
+    def __init__(self, tests: dict, args: any):  # NOQA
+        super(Provider, self).__init__(tests, args)
         self.definition_file = os.path.join(os.path.dirname(__file__), 'aws.yaml')
 
     def process(self, resource_section: str, resource_object: dict, shared_messages: list) -> Process:
@@ -48,10 +44,10 @@ class Provider(AbstractProvider):
         :return: Response from AWS
         """
         if resource_definition['client'] == 'virga':
-            client = VismaClient(self.params)
+            client = VismaClient()
             return getattr(client, resource_definition['action'])(resource_definition, resource_object)
         else:
-            client = boto3.client(resource_definition['client'], **self.params)
+            client = boto3.client(resource_definition['client'])
             filters = self.format_filters(resource_definition, resource_object)
             return getattr(client, resource_definition['action'])(Filters=filters)
 
@@ -83,7 +79,7 @@ class Provider(AbstractProvider):
 
         with Manager() as manager:
             shared_messages = manager.list()
-            for resource_section, resource_objects in self.config.get('tests', {}).items():
+            for resource_section, resource_objects in self.tests.items():
                 for resource_object in resource_objects:
                     process = self.process(resource_section, resource_object, shared_messages)
                     jobs.append(process)

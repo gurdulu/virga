@@ -16,7 +16,6 @@ def parser() -> any:
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('provider', help='Provider')
     arg_parser.add_argument('test_file', help='Test configuration file')
-    arg_parser.add_argument('-p', '--param', nargs='*', help='Provider parameters (format key=value)')
     arg_parser.add_argument('-d', '--definition', help='Definition file')
     arg_parser.add_argument('-l', '--logfile', help='Log file')
     arg_parser.add_argument('-s', '--silent', help='Do not output results', action='store_true', default=False)
@@ -68,5 +67,4 @@ def asserts():
     args = parser()
     tests = read_test_file(args.test_file)
     provider = get_provider_class(tests, args)
-    provider.validate()
     provider.action()

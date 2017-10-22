@@ -12,14 +12,7 @@ class TestAWS(TestCase):
         self.arg_parse = MockArgParse(
             debug=False, silent=True, logfile=None, output='/tmp', definition=None
         )
-        self.provider = Provider({'provider': {}}, self.arg_parse)
-        self.valid_credentials = {
-            'Credentials': {
-                'AccessKeyId': 'access_key_id',
-                'SecretAccessKey': 'secret_access_key',
-                'SessionToken': 'session_token',
-            }
-        }
+        self.provider = Provider({}, self.arg_parse)
 
     def test_lookup_success(self, mock_call):
         mock_call.return_value = fixture('subnet.json', get_json=True)
@@ -128,6 +121,6 @@ class TestAWS(TestCase):
 
     @patch('virga.providers.aws.Provider.process')
     def test_launch_tests(self, mock_process, *args):
-        self.provider.config = fixture('config.yaml', get_yaml=True)
+        self.provider.tests = fixture('config.yaml', get_yaml=True)
         self.provider.action()
         self.assertEqual(3, mock_process.call_count)
