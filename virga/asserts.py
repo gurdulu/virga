@@ -1,10 +1,9 @@
 import argparse
-from importlib import import_module
 
 import yaml
 from yaml.parser import ParserError
 
-from virga.exceptions import VirgaException
+from virga.common import VirgaException, get_provider_class
 
 
 def parser() -> any:
@@ -40,31 +39,14 @@ def read_test_file(test_file_path: str) -> dict:
         raise VirgaException('Invalid test file')
 
 
-def get_provider_class(tests: dict, args: any) -> any:
-    """
-    Return an instance of the Provider based on the name in the configuration.
-
-    :param tests: Tests to execute
-    :param args: Command line args
-    :return: An instance of the Provider
-    """
-    try:
-        provider_module = import_module('virga.providers.%s' % args.provider)
-        return provider_module.Provider(tests, args)
-    except ModuleNotFoundError:
-        raise VirgaException('Provider module not found')
-    except AttributeError:
-        raise VirgaException('Provider class not found')
-
-
 def asserts():
     """
     The real deal.
 
-    Calls the parser, reads the configuration, gets the Provider instantiated, calls the
-    validator and starts the procedure.
+    Calls the parser, reads the test file, gets the Provider instantiated, starts the procedure.
     """
     args = parser()
     tests = read_test_file(args.test_file)
-    provider = get_provider_class(tests, args)
+    provider = get_provider_class(args)
+    provider.set_tests(tests)
     provider.action()

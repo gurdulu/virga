@@ -4,16 +4,16 @@ import boto3
 
 import jmespath
 
-from virga.exceptions import VirgaException
-from virga.providers import AbstractProvider
+from virga.common import VirgaException
+from virga.providers.abstract import AbstractProvider
 from virga.providers.aws.vismaclient import VismaClient
 
 
 class Provider(AbstractProvider):
     """Implementation of AWS provider class."""
 
-    def __init__(self, tests: dict, args: any):  # NOQA
-        super(Provider, self).__init__(tests, args)
+    def __init__(self, args: any):  # NOQA
+        super(Provider, self).__init__(args)
         self.definition_file = os.path.join(os.path.dirname(__file__), 'aws.yaml')
 
     def process(self, resource_section: str, resource_object: dict, shared_messages: list) -> Process:

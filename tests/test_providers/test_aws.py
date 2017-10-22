@@ -2,7 +2,7 @@ from unittest import TestCase
 from unittest.mock import patch, call
 
 from tests import MockArgParse, fixture
-from virga.exceptions import VirgaException
+from virga.common import VirgaException
 from virga.providers.aws import Provider
 
 
@@ -12,7 +12,7 @@ class TestAWS(TestCase):
         self.arg_parse = MockArgParse(
             debug=False, silent=True, logfile=None, output='/tmp', definition=None
         )
-        self.provider = Provider({}, self.arg_parse)
+        self.provider = Provider(self.arg_parse)
 
     def test_lookup_success(self, mock_call):
         mock_call.return_value = fixture('subnet.json', get_json=True)
@@ -73,7 +73,7 @@ class TestAWS(TestCase):
         self.provider.evaluate(test, definition, [])
         mock_format_filters.assert_called_once_with(definition, {'name': 'my-subnet', 'assertions': []})
 
-    @patch('virga.providers.AbstractProvider.assertion')
+    @patch('virga.providers.abstract.AbstractProvider.assertion')
     def test_evaluate_no_assertions_calls_assertion(self, mock_assertion, mock_call):
         mock_call.return_value = fixture('subnet.json', get_json=True)
         test = {

@@ -3,13 +3,13 @@ from unittest import TestCase
 import sys
 from unittest.mock import patch, mock_open
 
-from tests import MockArgParse, MockProvider, fixture
+from tests import MockProvider, fixture
 
 # https://stackoverflow.com/questions/8658043/how-to-mock-an-import
 sys.modules['virga.providers.provider_not_there'] = __import__('unittest.mock')
 
-from virga.asserts import asserts, parser, read_test_file, get_provider_class  # NOQA
-from virga.exceptions import VirgaException  # NOQA
+from virga.asserts import asserts, parser, read_test_file  # NOQA
+from virga.common import VirgaException  # NOQA
 
 
 class TestVirgaAsserts(TestCase):
@@ -44,20 +44,6 @@ class TestVirgaAsserts(TestCase):
         with patch('builtins.open', mock_open(read_data=fixture('invalid.yaml'))) as _:
             with self.assertRaisesRegex(VirgaException, 'Invalid test file'):
                 read_test_file('test-file-not-here.yaml')
-
-    @patch('virga.asserts.parser')
-    def test_not_existing_provider_name_raise_virga_exc(self, mock_parser):
-        with self.assertRaisesRegex(VirgaException, 'Provider module not found'):
-            get_provider_class({}, MockArgParse(provider=''))
-
-    @patch('virga.asserts.parser')
-    def test_invalid_module_raise_virga_exc(self, mock_parser):
-        with self.assertRaisesRegex(VirgaException, 'Provider module not found'):
-            get_provider_class({}, MockArgParse(provider='no_module'))
-
-    def test_invalid_class_raise_virga_exc(self):
-        with self.assertRaisesRegex(VirgaException, 'Provider class not found'):
-            get_provider_class({}, MockArgParse())
 
     @patch('virga.asserts.parser')
     @patch('virga.asserts.read_test_file')

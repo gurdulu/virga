@@ -1,6 +1,6 @@
 import boto3
 
-from virga.exceptions import VirgaException
+from virga.common import VirgaException
 
 
 class VismaClient(object):

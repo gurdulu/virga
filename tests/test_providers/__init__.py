@@ -1,4 +1,4 @@
-from virga.providers import AbstractProvider
+from virga.providers.abstract import AbstractProvider
 
 
 class MockProvider(AbstractProvider):
