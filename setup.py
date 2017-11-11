@@ -28,6 +28,9 @@ setup(
     zip_safe=False,
     test_suite='nose.collector',
     tests_require=['nose'],
-    scripts=['bin/virga'],
+    scripts=[
+        'bin/virga-asserts',
+        'bin/virga-samples',
+    ],
     include_package_data=True,
 )

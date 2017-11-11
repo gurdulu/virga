@@ -1,8 +1,10 @@
+import json
 from multiprocessing import Manager, Process
 import os
 import boto3
 
 import jmespath
+import yaml
 
 from virga.common import VirgaException
 from virga.providers.abstract import AbstractProvider
@@ -135,3 +137,50 @@ class Provider(AbstractProvider):
             return items[0][resource_definition['resource_id']]
         except (KeyError, IndexError):
             raise VirgaException('Lookup %s %s %s failed' % (section, identifier, resource_id))
+
+    def sample(self, resource_type: str, resource_id: str) -> str:
+        try:
+            definition = self.read_definition()[resource_type]
+        except KeyError:
+            raise VirgaException('Definition not found')
+        response = self.client(definition, {'id': resource_id})
+        try:
+            result = self.convert_to_test(
+                resource_type, resource_id, self.flatten_items(response, definition['prefix'])[0]
+            )
+        except IndexError:
+            raise VirgaException('Resource not found')
+        return result
+
+    @staticmethod
+    def convert_to_test_list():
+        pass
+
+    @staticmethod
+    def convert_to_test_dict():
+        pass
+
+    def convert_to_test(self, resource_type: str, resource_id: str, resource: dict) -> str:
+        assertions = []
+
+        for k, v in resource.items():
+            if isinstance(v, str):
+                assertions.append("%s=='%s'" % (k, v))
+            elif isinstance(v, bool):
+                assertions.append("%s==`%s`" % (k, 'true' if v else 'false'))
+            elif isinstance(v, int):
+                assertions.append("%s==`%s`" % (k, v))
+            elif isinstance(v, list):
+                assertions.append(self.convert_to_test_list())
+            elif isinstance(v, dict):
+                assertions.append(self.convert_to_test_dict())
+
+        result = {
+            resource_type: [
+                {
+                    'id': resource_id,
+                    'assertions': assertions
+                }
+            ]
+        }
+        return yaml.dump(result)

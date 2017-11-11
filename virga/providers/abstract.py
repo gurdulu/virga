@@ -61,6 +61,11 @@ class AbstractProvider(object):
         """
         raise NotImplementedError('Implement lookup method')
 
+    @abc.abstractmethod
+    def sample(self, resource_type: str, resource_id: str):
+        """Stub for obtaining resource samples."""
+        raise NotImplementedError('Implement sample method')
+
     def get_definition_file(self) -> str:
         """Workaround for having an abstract property."""
         if self.definition_file is None:
@@ -263,5 +268,5 @@ class AbstractProvider(object):
         num_errors = len([x for x in messages if not x.get('success', False)])
         if num_errors > 0:
             message_error = 'is an error' if num_errors == 1 else 'are %d errors' % num_errors
-            sys.stderr.write('There %s on %s tests.' % (message_error, len(messages)))
+            sys.stderr.write('There %s on %s tests.\n' % (message_error, len(messages)))
             sys.exit(1)
