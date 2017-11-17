@@ -7,8 +7,7 @@ from unittest.mock import patch, mock_open, call
 
 from tests import MockArgParse, fixture
 from tests.test_providers import MockProvider
-from virga import VirgaException
-from virga.providers import AbstractProvider, SUCCESS
+from virga.providers.abstract import AbstractProvider, SUCCESS
 
 
 class TestAbstractProvider(TestCase):
@@ -21,12 +20,12 @@ class TestAbstractProvider(TestCase):
             output='/tmp',
             definition='any'
         )
-        self.provider = MockProvider({}, self.arg_parse)
+        self.provider = MockProvider(self.arg_parse)
 
     def test_abstract_method(self):
         class Provider(AbstractProvider):
             pass
-        provider = Provider({}, MockArgParse(debug=False, silent=False, logfile=None))
+        provider = Provider(MockArgParse(debug=False, silent=False, logfile=None))
 
         with self.assertRaises(NotImplementedError):
             provider.action()
@@ -36,26 +35,26 @@ class TestAbstractProvider(TestCase):
     @patch('logging.addLevelName')
     def test_set_logger_add_success(self, mock_add_level):
         arg_parse = MockArgParse(debug=False, silent=False, logfile=None)
-        provider = MockProvider({}, arg_parse)
+        provider = MockProvider(arg_parse)
         provider.set_logger(arg_parse)
         mock_add_level.assert_called_once_with(SUCCESS, 'SUCCESS')
 
     @patch('logging.Formatter')
     def test_set_logger_set_formatter(self, mock_formatter):
         arg_parse = MockArgParse(debug=False, silent=False, logfile=None)
-        provider = MockProvider({}, arg_parse)
+        provider = MockProvider(arg_parse)
         provider.set_logger(arg_parse)
         mock_formatter.assert_called_once_with('%(asctime)s %(levelname)s - %(message)s')
 
     def test_set_logger_logging_level_info(self):
         arg_parse = MockArgParse(debug=False, silent=False, logfile=None)
-        provider = MockProvider({}, arg_parse)
+        provider = MockProvider(arg_parse)
         provider.set_logger(arg_parse)
         self.assertEqual(logging.INFO, provider.logger.level)
 
     def test_set_logger_logging_level_debug(self):
         arg_parse = MockArgParse(debug=True, silent=False, logfile=None)
-        provider = MockProvider({}, arg_parse)
+        provider = MockProvider(arg_parse)
         provider.set_logger(arg_parse)
         self.assertEqual(logging.DEBUG, provider.logger.level)
 
@@ -67,7 +66,7 @@ class TestAbstractProvider(TestCase):
     @skipIf(sys.platform.startswith('win'), 'Seriously?')
     def test_set_logger_log_on_file(self, mock_file_handler):
         arg_parse = MockArgParse(debug=False, silent=True, logfile='/dev/null')
-        provider = MockProvider({}, arg_parse)
+        provider = MockProvider(arg_parse)
         provider.set_logger(arg_parse)
         mock_file_handler.assert_called_once_with('/dev/null')
 
@@ -79,7 +78,7 @@ class TestAbstractProvider(TestCase):
     @patch('logging.getLogger')
     def test_set_logger_instantiate_the_logger(self, mock_get_logger):
         self.provider.set_logger(self.arg_parse)
-        mock_get_logger.assert_called_once_with('virga.providers')
+        mock_get_logger.assert_called_once_with('virga.providers.abstract')
         self.assertIsNotNone(self.provider.logger)
 
     @patch('logging.Logger.setLevel')
@@ -89,7 +88,7 @@ class TestAbstractProvider(TestCase):
         mock_add_handler.assert_called_once()
         mock_set_level.assert_called_once_with(logging.CRITICAL)
 
-    @patch('virga.providers.AbstractProvider.set_logger')
+    @patch('virga.providers.abstract.AbstractProvider.set_logger')
     def test_logs_instantiate_the_logger_if_it_is_none(self, mock_set_logger):
         self.provider.logs([{}])
         mock_set_logger.assert_called_once_with(self.arg_parse)
@@ -154,7 +153,7 @@ class TestAbstractProvider(TestCase):
     def test_outcome_result_none(self):
         self.assertFalse(self.provider.outcome(None))
 
-    @patch('virga.providers.AbstractProvider.flatten')
+    @patch('virga.providers.abstract.AbstractProvider.flatten')
     def test_outcome_flatten_result(self, mock_flatten):
         self.provider.outcome('any')
         mock_flatten.called_once_with('any')
@@ -229,87 +228,38 @@ class TestAbstractProvider(TestCase):
         handle = mock_opened()
         handle.write.assert_has_calls(expected)
 
-    @patch('virga.providers.AbstractProvider.output')
+    @patch('virga.providers.abstract.AbstractProvider.output')
     def test_assertion_call_output(self, mock_output):
-        self.provider.assertion('AnyKey==`any-value`', 'Context', {}, 'resource-id')
+        self.provider.assertion("AnyKey=='any-value'", 'Context', {}, 'resource-id')
         mock_output.assert_called_once_with({}, 'resource-id')
 
-    @patch('virga.providers.AbstractProvider._lookup')
+    @patch('virga.providers.abstract.AbstractProvider._lookup')
     def test_assertion_call_lookup(self, mock_lookup):
-        mock_lookup.return_value = 'AnyKey==`any-value`'
-        self.provider.assertion('AnyKey==`any-value`', 'Context', {}, 'resource-id')
-        mock_lookup.assert_called_once_with('AnyKey==`any-value`')
+        mock_lookup.return_value = "AnyKey=='any-value'"
+        self.provider.assertion("AnyKey=='any-value'", 'Context', {}, 'resource-id')
+        mock_lookup.assert_called_once_with("AnyKey=='any-value'")
 
     @patch('jmespath.search')
     def test_assertion_call_search(self, mock_search):
-        self.provider.assertion('AnyKey==`any-value`', 'Context', {}, 'resource-id')
-        mock_search.assert_called_once_with('AnyKey==`any-value`', {})
+        self.provider.assertion("AnyKey=='any-value'", 'Context', {}, 'resource-id')
+        mock_search.assert_called_once_with("AnyKey=='any-value'", {})
 
     @patch('logging.Logger.debug')
     def test_assertion_call_debug(self, mock_debug):
-        self.provider.assertion('AnyKey==`any-value`', 'Context', {}, 'resource-id')
-        mock_debug.assert_called_once_with('resource-id: AnyKey==`any-value` eval False == False')
+        self.provider.assertion("AnyKey=='any-value'", 'Context', {}, 'resource-id')
+        mock_debug.assert_called_once_with("resource-id: AnyKey=='any-value' eval False == False")
 
-    @patch('virga.providers.AbstractProvider.outcome')
+    @patch('virga.providers.abstract.AbstractProvider.outcome')
     def test_assertion_call_outcome(self, mock_outcome):
-        self.provider.assertion('AnyKey==`any-value`', 'Context', {}, 'resource-id')
+        self.provider.assertion("AnyKey=='any-value'", 'Context', {}, 'resource-id')
         mock_outcome.assert_called_once_with(False)
 
-    def test_validate_no_params(self):
-        class Provider(AbstractProvider):
-            def lookup(self, section, identifier, resource_id):
-                pass
-
-            def action(self):
-                pass
-
-        provider = Provider({}, None)
-        with self.assertRaisesRegex(VirgaException, 'Configuration error'):
-            provider.validate()
-
-    def test_validate_no_required_params(self):
-        class Provider(AbstractProvider):
-            def lookup(self, section, identifier, resource_id):
-                pass
-
-            def action(self):
-                pass
-
-        provider = Provider({'provider': {'params': {}}}, None)
-        with self.assertRaisesRegex(NotImplementedError, 'Implement required_params property'):
-            provider.validate()
-
-    def test_validate_param_string(self):
-        self.provider.config = {'provider': {'params': {}}}
-        self.provider.required_params = ['param1']
-        with self.assertRaisesRegex(VirgaException, '"param1" is required'):
-            self.provider.validate()
-
-    def test_validate_param_list_not_set(self):
-        self.provider.config = {'provider': {'params': {}}}
-        self.provider.required_params = [['param1', 'param2']]
-        with self.assertRaisesRegex(VirgaException, 'param1 or param2 is required'):
-            self.provider.validate()
-
-    def test_validate_param_list_all_set(self):
-        self.provider.required_params = [['param1', 'param2']]
-        self.provider.config = {
-            'provider': {
-                'params': {
-                    'param1': 1,
-                    'param2': 1,
-                }
-            }
-        }
-        with self.assertRaisesRegex(VirgaException, 'either param1 or param2 must be set'):
-            self.provider.validate()
-
-    @patch('builtins.open', new_callable=mock_open, read_data=fixture('bare-definition.yaml'))
+    @patch('builtins.open', new_callable=mock_open, read_data=fixture('bare-valid.yaml'))
     def test_definition_file(self, *args):
         self.provider.definition_file = 'any'
         self.assertDictEqual({'test': 'ok'}, self.provider.definition)
 
-    @patch('builtins.open', new_callable=mock_open, read_data=fixture('bare-definition.yaml'))
+    @patch('builtins.open', new_callable=mock_open, read_data=fixture('bare-valid.yaml'))
     def test_definition_file_missing(self, *args):
         with self.assertRaisesRegex(NotImplementedError, 'Implement definition_file property'):
             _ = self.provider.definition
@@ -343,7 +293,7 @@ class TestAbstractProvider(TestCase):
         ]
         self.provider.result(messages)
         mock_exit.assert_called_once_with(1)
-        mock_write.assert_called_once_with('There is an error on 3 tests.')
+        mock_write.assert_called_once_with('There is an error on 3 tests.\n')
 
     @patch('sys.stderr.write')
     @patch('sys.exit')
@@ -355,4 +305,4 @@ class TestAbstractProvider(TestCase):
         ]
         self.provider.result(messages)
         mock_exit.assert_called_once_with(1)
-        mock_write.assert_called_once_with('There are 3 errors on 3 tests.')
+        mock_write.assert_called_once_with('There are 3 errors on 3 tests.\n')

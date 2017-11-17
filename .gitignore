@@ -3,6 +3,8 @@
 .idea
 __pycache__
 *.iml
+*.ipr
+*.iws
 .private*
 dist
 *.egg-info

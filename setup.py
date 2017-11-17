@@ -11,7 +11,6 @@ setup(
         'Development Status :: 2 - Pre-Alpha',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Topic :: Software Development :: Quality Assurance',
         'Topic :: Software Development :: Testing',
@@ -29,6 +28,9 @@ setup(
     zip_safe=False,
     test_suite='nose.collector',
     tests_require=['nose'],
-    scripts=['bin/virga'],
+    scripts=[
+        'bin/virga-asserts',
+        'bin/virga-samples',
+    ],
     include_package_data=True,
 )

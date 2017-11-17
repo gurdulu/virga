@@ -1,0 +1,125 @@
+{
+  "AmiLaunchIndex": 0,
+  "ImageId": "ami-01234567890",
+  "InstanceId": "i-01234567891",
+  "InstanceType": "t2.micro",
+  "KeyName": "key-name",
+  "LaunchTime": "2017-01-11T10:37:30+00:00",
+  "Monitoring": {
+    "State": "disabled"
+  },
+  "Placement": {
+    "AvailabilityZone": "eu-west-2a",
+    "GroupName": "",
+    "Tenancy": "default"
+  },
+  "PrivateDnsName": "ip-10-0-0-1.eu-west-2.compute.internal",
+  "PrivateIpAddress": "10.0.0.1",
+  "ProductCodes": [],
+  "PublicDnsName": "ec2-144-144-144-144.eu-west-2.compute.amazonaws.com",
+  "PublicIpAddress": "144.144.144.144",
+  "State": {
+    "Code": 80,
+    "Name": "stopped"
+  },
+  "StateTransitionReason": "User initiated (2017-01-11 19:10:26 GMT)",
+  "SubnetId": "subnet-01234567892",
+  "VpcId": "vpc-01234567893",
+  "Architecture": "x86_64",
+  "BlockDeviceMappings": [
+    {
+      "DeviceName": "/dev/sda1",
+      "Ebs": {
+        "AttachTime": "2017-01-11T10:37:31+00:00",
+        "DeleteOnTermination": true,
+        "Status": "attached",
+        "VolumeId": "vol-01234567894"
+      }
+    },
+    {
+      "DeviceName": "/dev/sdf",
+      "Ebs": {
+        "AttachTime": "2017-01-11T10:37:31+00:00",
+        "DeleteOnTermination": true,
+        "Status": "attached",
+        "VolumeId": "vol-01234567895"
+      }
+    }
+  ],
+  "ClientToken": "",
+  "EbsOptimized": false,
+  "Hypervisor": "xen",
+  "IamInstanceProfile": {
+    "Arn": "arn:aws:iam::01234567896:instance-profile/role-01234567890",
+    "Id": "AIPAJTW44ERUWECIPOOOO"
+  },
+  "NetworkInterfaces": [
+    {
+      "Association": {
+        "IpOwnerId": "01234567896",
+        "PublicDnsName": "ec2-144-144-144-144.eu-west-2.compute.amazonaws.com",
+        "PublicIp": "144.144.144.144"
+      },
+      "Attachment": {
+        "AttachTime": "2017-01-11T10:37:30+00:00",
+        "AttachmentId": "eni-attach-01234567897",
+        "DeleteOnTermination": true,
+        "DeviceIndex": 0,
+        "Status": "attached"
+      },
+      "Description": "",
+      "Groups": [
+        {
+          "GroupName": "app-sgp",
+          "GroupId": "sg-01234567898"
+        }
+      ],
+      "Ipv6Addresses": [],
+      "MacAddress": "06:68:97:fd:f7:ff",
+      "NetworkInterfaceId": "eni-01234567899",
+      "OwnerId": "01234567901",
+      "PrivateDnsName": "ip-10-0-0-1.eu-west-2.compute.internal",
+      "PrivateIpAddress": "10.0.0.1",
+      "PrivateIpAddresses": [
+        {
+          "Association": {
+            "IpOwnerId": "01234567902",
+            "PublicDnsName": "ec2-144-144-144-144.eu-west-2.compute.amazonaws.com",
+            "PublicIp": "144.144.144.144"
+          },
+          "Primary": true,
+          "PrivateDnsName": "ip-10-0-0-1.eu-west-2.compute.internal",
+          "PrivateIpAddress": "10.0.0.1"
+        }
+      ],
+      "SourceDestCheck": true,
+      "Status": "in-use",
+      "SubnetId": "subnet-01234567903",
+      "VpcId": "vpc-01234567904"
+    }
+  ],
+  "RootDeviceName": "/dev/sda1",
+  "RootDeviceType": "ebs",
+  "SecurityGroups": [
+    {
+      "GroupName": "app-sgp",
+      "GroupId": "sg-01234567905"
+    }
+  ],
+  "SourceDestCheck": true,
+  "StateReason": {
+    "Code": "Client.UserInitiatedShutdown",
+    "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+  },
+  "Tags": [
+    {
+      "Key": "environment",
+      "Value": "test"
+    },
+    {
+      "Key": "Name",
+      "Value": "bp-test-net-bst-2a-ec2"
+    }
+  ],
+  "VirtualizationType": "hvm"
+}

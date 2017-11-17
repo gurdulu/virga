@@ -30,6 +30,10 @@ class MockArgParse(object):
 class MockProvider(object):
 
     def __init__(self):
-        self.validate = MagicMock()
         self.action = MagicMock()
         self.lookup = MagicMock()
+        self.sample = MagicMock()
+        self.tests = None
+
+    def set_tests(self, tests):
+        self.tests = tests

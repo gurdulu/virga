@@ -55,39 +55,44 @@ Quick start
 
 1. Install Virga :code:`pip install virga`
 2. Create the file ``tests.yaml``
-3. :code:`virga tests.yaml`
+3. :code:`virga-asserts tests.yaml`
 
 
-``tests.yaml`` is the `Tests definition file`_.
+``tests.yaml`` is the `Tests file`_.
 
 -------
 Options
 -------
 
-Following the list of options of Virga
+Following the list of options of virga-asserts
 
 .. code::bash
 
-    usage: virga [-h] [-definition DEFINITION] [-logfile LOGFILE] [-debug] [-silent] [-output OUTPUT] config
+    usage: virga-asserts [-h] [-d DEFINITION] [-l LOGFILE] [-s] [-o OUTPUT] [--debug] provider test_file
 
     positional arguments:
-      config                  test definition file
+      provider              Provider
+      test_file             Test configuration file
 
     optional arguments:
-      -h, --help              show this help message and exit
-      -definition DEFINITION  definition file
-      -logfile LOGFILE        log file
-      -output OUTPUT          resource output directory
-      -silent                 do not output results
-      -debug                  show debug
+      -h, --help            show this help message and exit
+      -d DEFINITION, --definition DEFINITION
+                            Definition file
+      -l LOGFILE, --logfile LOGFILE
+                            Log file
+      -s, --silent          Do not output results
+      -o OUTPUT, --output OUTPUT
+                            Resource output directory
+      --debug               Show debug
 
-The option ``-definition`` is necessary only if the standard definition file has been modified.
 
-By default the logs are outputted to the stdout. ``-logfile`` redirect the log stream to a file instead.
+The option ``--definition`` is necessary only if the standard definition file has been modified.
 
-``-output`` saves the information about the single resources in a directory for testing purposes.
+By default the logs are outputted to the stdout. ``--logfile`` redirect the log stream to a file instead.
 
-``-silent`` sets the level for the log to CRITICAL and ``-debug`` sets the level to DEBUG  (see
+``--output`` saves the information about the single resources in a directory for testing purposes.
+
+``--silent`` sets the level for the log to CRITICAL and ``--debug`` sets the level to DEBUG  (see
 `Logging facility for Python <https://docs.python.org/3/library/logging.html>`_).
 
 -------------------
@@ -140,8 +145,8 @@ case boto3_) but in case we want to add new sections or defining different ident
 as template and override the default definition file with the option ``-definition``.
 
 
-Tests definition file
-=====================
+Tests file
+==========
 
 An example is worth 1000 words.
 
@@ -158,28 +163,19 @@ According to the definition, our ``test.yaml`` will be
 .. code:: yaml
 
     ---
-    provider:
-      name: aws
-      params:
-        region_name: eu-west-2
-      extra:
-        role_arn: arn:aws:iam::0123456789:role/Tests
-    tests:
-      subnets:
-        - id: subnet-0123456789
-          assertions:
-            - CidrBlock=='10.0.0.0/24'
-            - Tags[?Key=='environment' && Value=='staging']
-            - Tags[?Key=='Name' && Value=='my-subnet']
-      instances:
-        - name: my-app-*
-          assertions:
-            - SubnetId=="_lookup('subnets', 'name', 'my-subnet')"
+    subnets:
+    - id: subnet-0123456789
+      assertions:
+      - CidrBlock=='10.0.0.0/24'
+      - Tags[?Key=='environment' && Value=='staging']
+      - Tags[?Key=='Name' && Value=='my-subnet']
+    instances:
+    - name: my-app-*
+      assertions:
+      - SubnetId=="_lookup('subnets', 'name', 'my-subnet')"
 
-The ``provider`` section specify the parameters for connecting our client to AWS.
-
-The ``tests`` section declares two scopes for the tests: ``subnets`` and ``instances`` and the resources are
-identified with the ``subnet-id`` for the subnet and with the ``tag:Name`` for the EC2 instances.
+There are  declared two scopes for the tests: ``subnets`` and ``instances`` and the resources are identified with
+the ``subnet-id`` for the subnet and with the ``tag:Name`` for the EC2 instances.
 
 The ``assertions`` are the actual tests: each item represents a condition to verify using the query language
 JMESPath_. The only exception is the last assertion
