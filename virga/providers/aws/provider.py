@@ -1,4 +1,3 @@
-import json
 from multiprocessing import Manager, Process
 import os
 import boto3
@@ -8,7 +7,7 @@ import yaml
 
 from virga.common import VirgaException
 from virga.providers.abstract import AbstractProvider
-from virga.providers.aws.vismaclient import VismaClient
+from virga.providers.aws.virgaclient import VirgaClient
 
 
 class Provider(AbstractProvider):
@@ -46,12 +45,11 @@ class Provider(AbstractProvider):
         :return: Response from AWS
         """
         if resource_definition['client'] == 'virga':
-            client = VismaClient()
+            client = VirgaClient()
             return getattr(client, resource_definition['action'])(resource_definition, resource_object)
-        else:
-            client = boto3.client(resource_definition['client'])
-            filters = self.format_filters(resource_definition, resource_object)
-            return getattr(client, resource_definition['action'])(Filters=filters)
+        client = boto3.client(resource_definition['client'])
+        filters = self.format_filters(resource_definition, resource_object)
+        return getattr(client, resource_definition['action'])(Filters=filters)
 
     def evaluate(self, resource_object: dict, resource_definition: dict, shared_messages: list):
         """
@@ -136,51 +134,122 @@ class Provider(AbstractProvider):
             items = self.flatten_items(response, resource_definition['prefix'])
             return items[0][resource_definition['resource_id']]
         except (KeyError, IndexError):
-            raise VirgaException('Lookup %s %s %s failed' % (section, identifier, resource_id))
+            return 'Lookup %s %s %s failed' % (section, identifier, resource_id)
 
     def sample(self, resource_type: str, resource_id: str) -> str:
+        """
+        Method to invoke for generating a test sample.
+
+        :param resource_type: Type of resource to sample
+        :param resource_id: ID of resource to sample
+        :return: Test in YAML format
+        """
         try:
             definition = self.read_definition()[resource_type]
         except KeyError:
-            raise VirgaException('Definition not found')
+            raise VirgaException('Resource definition not found')
+        if definition['client'] == 'virga':
+            raise VirgaException('Resource sample for %s not supported' % resource_type)
         response = self.client(definition, {'id': resource_id})
         try:
-            result = self.convert_to_test(
-                resource_type, resource_id, self.flatten_items(response, definition['prefix'])[0]
-            )
+            flattened_results = self.flatten_items(response, definition['prefix'])
+            result = self.convert_to_test(resource_type, resource_id, flattened_results[0])
         except IndexError:
             raise VirgaException('Resource not found')
         return result
 
     @staticmethod
-    def convert_to_test_list():
-        pass
+    def convert_list_to_test_format(origin: str, data: list) -> str:
+        """
+        Convert a list in a format ready for tests.
+
+        :param origin: The parent key of the list
+        :param data: The list to convert
+        :return: The resulting string
+        """
+        result = []
+        for item in data:
+            if isinstance(item, str):
+                result.append("'%s'" % item)
+            elif isinstance(item, bool):
+                result.append("`%s`" % 'true' if item else 'false')
+            elif isinstance(item, (int, float)):
+                result.append("`%s`" % item)
+        return '%s[]==[%s]' % (origin, ', '.join(result))
 
     @staticmethod
-    def convert_to_test_dict():
-        pass
+    def convert_dicts_to_test_format(origin: str, data: list) -> list:
+        """
+        Convert a list of dictionaries in a format ready for tests.
+
+        :param origin: The parent key of the dictionary
+        :param data: The list of dictionaries to convert
+        :return: The resulting assertions
+        """
+        result = []
+        for item in data:
+            elements = []
+            for k, value in item.items():
+                if isinstance(value, str):
+                    elements.append("%s=='%s'" % (k, value))
+                elif isinstance(value, bool):
+                    elements.append("%s==`%s`" % (k, 'true' if value else 'false'))
+                elif isinstance(value, (int, float)):
+                    elements.append("%s==`%s`" % (k, value))
+            result.append('%s[?%s]' % (origin, ' && '.join(elements)))
+        return result
+
+    @staticmethod
+    def convert_dict_to_test_format(origin: str, data: dict) -> str:
+        """
+        Convert a dictionary in a format ready for tests.
+
+        :param origin: The parent key of the dictionary
+        :param data: The dictionary to convert
+        :return: The resulting string
+        """
+        result = []
+        for k, value in data.items():
+            if isinstance(value, str):
+                result.append("%s.%s=='%s'" % (origin, k, value))
+            elif isinstance(value, bool):
+                result.append("%s.%s==`%s`" % (origin, k, 'true' if value else 'false'))
+            elif isinstance(value, (int, float)):
+                result.append("%s.%s==`%s`" % (origin, k, value))
+        return " && ".join(result)
+
+    def convert_struct(self, resource: dict) -> list:
+        """
+        Convert a dictionary in a list of assertions.
+
+        :param resource: Resource to analyse
+        :return: List of assertions
+        """
+        assertions = []
+        for k, value in resource.items():
+            if isinstance(value, str):
+                assertions.append("%s=='%s'" % (k, value))
+            elif isinstance(value, bool):
+                assertions.append("%s==`%s`" % (k, 'true' if value else 'false'))
+            elif isinstance(value, (int, float)):
+                assertions.append("%s==`%s`" % (k, value))
+            elif isinstance(value, dict):
+                assertions.append(self.convert_dict_to_test_format(k, value))
+            elif isinstance(value, list) and not all(isinstance(item, dict) for item in value):
+                assertions.append(self.convert_list_to_test_format(k, value))
+            elif isinstance(value, list) and all(isinstance(item, dict) for item in value):
+                assertions += self.convert_dicts_to_test_format(k, value)
+        return assertions
 
     def convert_to_test(self, resource_type: str, resource_id: str, resource: dict) -> str:
-        assertions = []
+        """
+        Convert the resource object into a list of assertions.
 
-        for k, v in resource.items():
-            if isinstance(v, str):
-                assertions.append("%s=='%s'" % (k, v))
-            elif isinstance(v, bool):
-                assertions.append("%s==`%s`" % (k, 'true' if v else 'false'))
-            elif isinstance(v, int):
-                assertions.append("%s==`%s`" % (k, v))
-            elif isinstance(v, list):
-                assertions.append(self.convert_to_test_list())
-            elif isinstance(v, dict):
-                assertions.append(self.convert_to_test_dict())
-
-        result = {
-            resource_type: [
-                {
-                    'id': resource_id,
-                    'assertions': assertions
-                }
-            ]
-        }
-        return yaml.dump(result)
+        :param resource_type: Type of resource
+        :param resource_id: Resource ID
+        :param resource: Resource object
+        :return: The sample string in YAML format
+        """
+        assertions = self.convert_struct(resource)
+        result = {resource_type: [{'id': resource_id, 'assertions': assertions}]}
+        return yaml.dump(result, default_flow_style=False)

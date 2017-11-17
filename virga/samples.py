@@ -2,7 +2,7 @@ import argparse
 
 import sys
 
-from virga.common import get_provider_class
+from virga.common import get_provider_class, VirgaException
 
 
 def parser() -> any:
@@ -25,6 +25,10 @@ def samples():
 
     Calls the parser, gets the Provider instantiated, starts the procedure.
     """
-    args = parser()
-    provider = get_provider_class(args)
-    return provider.sample(args.section, args.resource)
+    try:
+        args = parser()
+        provider = get_provider_class(args)
+        return provider.sample(args.section, args.resource)
+    except VirgaException as ex:
+        sys.stderr.write(str(ex))
+        sys.exit(1)

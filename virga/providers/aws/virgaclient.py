@@ -3,9 +3,11 @@ import boto3
 from virga.common import VirgaException
 
 
-class VismaClient(object):
+class VirgaClient(object):
+    """VirgaClient substitute the standard AWS client for more complex requests."""
 
-    def find_certificate(self, resource_definition: dict, resource_object: dict) -> dict:
+    @staticmethod
+    def find_certificate(resource_definition: dict, resource_object: dict) -> dict:  # NOQA
         """
         Call boto3/acm for finding the certificate for the passed domain.
 

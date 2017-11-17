@@ -1,0 +1,18 @@
+---
+subnets:
+  client: ec2
+  action: describe_subnets
+  context: Subnets
+  prefix: Subnets
+  resource_id: SubnetId
+  identifiers:
+    id: subnet-id
+    name: tag:Name
+certificates:
+  client: virga
+  action: find_certificate
+  context: ACM Certificates
+  prefix: Certificate
+  resource_id: CertificateArn
+  identifiers:
+    id: domain-name

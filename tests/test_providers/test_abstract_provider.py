@@ -254,12 +254,12 @@ class TestAbstractProvider(TestCase):
         self.provider.assertion("AnyKey=='any-value'", 'Context', {}, 'resource-id')
         mock_outcome.assert_called_once_with(False)
 
-    @patch('builtins.open', new_callable=mock_open, read_data=fixture('bare-definition.yaml'))
+    @patch('builtins.open', new_callable=mock_open, read_data=fixture('bare-valid.yaml'))
     def test_definition_file(self, *args):
         self.provider.definition_file = 'any'
         self.assertDictEqual({'test': 'ok'}, self.provider.definition)
 
-    @patch('builtins.open', new_callable=mock_open, read_data=fixture('bare-definition.yaml'))
+    @patch('builtins.open', new_callable=mock_open, read_data=fixture('bare-valid.yaml'))
     def test_definition_file_missing(self, *args):
         with self.assertRaisesRegex(NotImplementedError, 'Implement definition_file property'):
             _ = self.provider.definition
@@ -293,7 +293,7 @@ class TestAbstractProvider(TestCase):
         ]
         self.provider.result(messages)
         mock_exit.assert_called_once_with(1)
-        mock_write.assert_called_once_with('There is an error on 3 tests.')
+        mock_write.assert_called_once_with('There is an error on 3 tests.\n')
 
     @patch('sys.stderr.write')
     @patch('sys.exit')
@@ -305,4 +305,4 @@ class TestAbstractProvider(TestCase):
         ]
         self.provider.result(messages)
         mock_exit.assert_called_once_with(1)
-        mock_write.assert_called_once_with('There are 3 errors on 3 tests.')
+        mock_write.assert_called_once_with('There are 3 errors on 3 tests.\n')

@@ -1,5 +1,4 @@
 import argparse
-
 import yaml
 from yaml.parser import ParserError
 

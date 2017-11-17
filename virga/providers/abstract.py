@@ -6,8 +6,8 @@ import re
 
 import datetime
 import sys
-import jmespath
 import unicodedata
+import jmespath
 import yaml
 
 
