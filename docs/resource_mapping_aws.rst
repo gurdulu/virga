@@ -109,5 +109,29 @@ List of mapped AWS resources
     <td>db-instance-id</td>
     </tr>
         
+    <tr>
+    <td>certificates</td>
+    <td>ACM Certificates</td>
+    <td>virga</td>
+    <td>id</td>
+    <td>domain-name</td>
+    </tr>
+        
+    <tr>
+    <td>acl</td>
+    <td>Network ACLs</td>
+    <td>ec2</td>
+    <td>id</td>
+    <td>network-acl-id</td>
+    </tr>
+        
+    <tr>
+    <td> </td>
+    <td> </td>
+    <td> </td>
+    <td>name</td>
+    <td>tag:Name</td>
+    </tr>
+        
     </table>
 
