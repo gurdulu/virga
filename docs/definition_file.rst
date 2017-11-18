@@ -99,7 +99,7 @@ From the example above the structure of the subnets definition for AWS is:
         id: subnet-id
         name: tag:Name
 
-and for the security groups
+and similarly for the security groups
 
 .. code:: yaml
 
@@ -115,4 +115,4 @@ and for the security groups
         group_name: group-name
 
 The list of identifiers can vary and can be personalised. Our standard definition file can be overridden from the
-command line with the option *-definition*.
+command line with the option *--definition*.
