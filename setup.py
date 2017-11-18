@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='virga',
-    version='0.0.8',
+    version='0.0.9',
     description='Analysing your Cloud infrastructure before the rain falls to the ground',
     long_description=io.open('README.rst', encoding='utf-8').read(),
     classifiers=[

@@ -54,7 +54,7 @@ Quick start
 
 1. Install Virga :code:`pip install virga`
 2. Create the file ``tests.yaml``
-3. :code:`virga-asserts tests.yaml`
+3. :code:`virga-asserts aws tests.yaml`
 
 
 ``tests.yaml`` is the `Tests file`_.
@@ -161,9 +161,7 @@ and then you want to know if the EC2 instances with the tag name starting with t
       assertions:
       - SubnetId=="_lookup('subnets', 'name', 'my-subnet')"
 
-The keys *id* and for identifying the resource to query are
-There are  declared two scopes for the tests: ``subnets`` and ``instances`` and the resources are identified with
-the ``subnet-id`` for the subnet and with the ``tag:Name`` for the EC2 instances.
+The keys *id* and *subnets* are identifiers declared in the definitions file.
 
 The ``assertions`` are the actual tests: each item represents a condition to verify using the query language
 JMESPath_. The only exception is the last assertion
