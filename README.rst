@@ -9,8 +9,6 @@ Virga
 
 Virga tests your Cloud resources.
 
-**The documentation needs to be updated.**
-
 -------------
 What is Virga
 -------------
@@ -19,7 +17,7 @@ From `Wikipedia <https://en.wikipedia.org/wiki/Virga>`_: *"In meteorology, Virga
 precipitation falling from a cloud that evaporates or sublimates before reaching the ground."*
 
 This piece of software is not about a weather phenomenon. Virga is a tool for analysing your Cloud infrastructure
-before the rain reaches the ground.
+before the rain catastrophically reaches the ground.
 
 ----------------------------------
 This project is still in pre-alpha
@@ -29,7 +27,6 @@ There are many things still missing:
 
 * the documentation needs to be completed
 * the definition file is just a draft for testing purposes
-* it needs tests on real data resources
 
 ------------------
 Provider supported
@@ -70,32 +67,22 @@ Following the list of options of virga-asserts
 
 .. code::bash
 
-    usage: virga-asserts [-h] [-d DEFINITION] [-l LOGFILE] [-s] [-o OUTPUT] [--debug] provider test_file
+    usage: virga-asserts [-h] [-d DEFINITION] [-l LOGFILE] [-s] [-o OUTPUT] [--debug] {aws} testfile
 
     positional arguments:
-      provider              Provider
-      test_file             Test configuration file
+      {aws}                 provider
+      testfile              test file
 
     optional arguments:
       -h, --help            show this help message and exit
       -d DEFINITION, --definition DEFINITION
-                            Definition file
+                            custom definition file
       -l LOGFILE, --logfile LOGFILE
-                            Log file
-      -s, --silent          Do not output results
+                            redirect the output to a log file
+      -s, --silent          do not output results
       -o OUTPUT, --output OUTPUT
-                            Resource output directory
-      --debug               Show debug
-
-
-The option ``--definition`` is necessary only if the standard definition file has been modified.
-
-By default the logs are outputted to the stdout. ``--logfile`` redirect the log stream to a file instead.
-
-``--output`` saves the information about the single resources in a directory for testing purposes.
-
-``--silent`` sets the level for the log to CRITICAL and ``--debug`` sets the level to DEBUG  (see
-`Logging facility for Python <https://docs.python.org/3/library/logging.html>`_).
+                            save the resource info into the specified directory
+      --debug               show debug
 
 -------------------
 Configuration files
@@ -105,10 +92,10 @@ See `This project is still in pre-alpha`_
 
 There are two types of configuration files.
 
-The first one (**definitions**) is used for defining the characteristics of the provider and the way we filter the
+The (**definitions**) are used for defining the characteristics of the provider and the way we filter the
 resources we want to check.
 
-The second one (**tests**) is specific to the tests we want to implement.
+The (**tests**) are specific to the tests we want to implement.
 
 Definitions
 ===========
@@ -137,30 +124,28 @@ The **definitions** describe the way we want to obtain information about a speci
         name: tag:Name
 
 
-In the piece of code above (see `<virga/providers/aws.yaml>`_) we say that for the ``subnets`` section we are going to
-instantiate a *client* and invoke an *action* identifying the resources we want to filter with **id** or with **name**.
+In the configuration above (see `<virga/providers/aws/aws.yaml>`_) we say that for the ``subnets`` section we are going
+to instantiate a *client* and invoke an *action* identifying the resources we want to filter with **id** or with **name**.
 
 The same concept is applied to the ``instances`` section.
 
-This configuration file is unlikely to be changed as contains information depending on the underlying library (in this
-case boto3_) but in case we want to add new sections or defining different identifiers, we can use the provided file
-as template and override the default definition file with the option ``-definition``.
+The **definitions** are unlikely to be changed as contain information depending on the underlying library (in this
+case boto3_).
 
+The default definition file can be overridden with the option ``--definition``.
 
 Tests file
 ==========
 
 An example is worth 1000 words.
 
-You want to know if the subnet ``my-subnet`` on AWS has:
+You want to know if the subnet with the id ``subnet-0123456789`` has:
 
 * the CIDR block equals to 10.0.0.0/24
-* set the tag *environment* with the value *staging*
+* the tag *environment* with the value *staging*
 
 and then you want to know if the EC2 instances with the tag name starting with the value ``my-app`` are in the subnet
 ``my-subnet``.
-
-According to the definition, our ``test.yaml`` will be
 
 .. code:: yaml
 
@@ -176,6 +161,7 @@ According to the definition, our ``test.yaml`` will be
       assertions:
       - SubnetId=="_lookup('subnets', 'name', 'my-subnet')"
 
+The keys *id* and for identifying the resource to query are
 There are  declared two scopes for the tests: ``subnets`` and ``instances`` and the resources are identified with
 the ``subnet-id`` for the subnet and with the ``tag:Name`` for the EC2 instances.
 
@@ -199,15 +185,21 @@ In the example above instead of declaring the equality
 
     SubnetId=="subnet-0123456789"
 
-we have filtered the subnet with the tag:Name equals to *my-subnet*.
+we have filtered the subnet by the *tag:Name*.
 
 The argument passed to the function are:
 
-* the context
-* the identifier (eg. *name* or *id*)
+* the resource type
+* the identifier (eg. *name*)
 * the value to search
 
 If no result is found, the test fails.
+
+-----------------
+Sample generation
+-----------------
+
+See `This project is still in pre-alpha`_
 
 ---
 FAQ
