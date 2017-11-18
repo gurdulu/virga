@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='virga',
-    version='0.0.9',
+    version='0.0.10',
     description='Analysing your Cloud infrastructure before the rain falls to the ground',
     long_description=io.open('README.rst', encoding='utf-8').read(),
     classifiers=[
@@ -22,6 +22,7 @@ setup(
     packages=[
         'virga',
         'virga.providers',
+        'virga.providers.aws',
     ],
     install_requires=io.open('requirements.txt', encoding='utf-8').readlines(),
     keywords='qa testing cloud aws',
