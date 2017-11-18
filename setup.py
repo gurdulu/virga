@@ -22,6 +22,7 @@ setup(
     packages=[
         'virga',
         'virga.providers',
+        'virga.providers.aws',
     ],
     install_requires=io.open('requirements.txt', encoding='utf-8').readlines(),
     keywords='qa testing cloud aws',
