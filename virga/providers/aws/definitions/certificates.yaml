@@ -1,0 +1,9 @@
+---
+certificates:
+  client: virga
+  action: find_certificate
+  context: ACM Certificates
+  prefix: Certificate
+  resource_id: CertificateArn
+  identifiers:
+    id: domain-name

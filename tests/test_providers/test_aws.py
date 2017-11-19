@@ -11,7 +11,7 @@ from virga.providers.aws.virgaclient import VirgaClient
 class TestAWS(TestCase):
     def setUp(self):
         self.arg_parse = MockArgParse(
-            debug=False, silent=True, logfile=None, output='/tmp', definition=None
+            debug=False, silent=True, logfile=None, output='/tmp', definitions=None
         )
         self.provider = Provider(self.arg_parse)
 
@@ -50,7 +50,7 @@ class TestAWS(TestCase):
         expected = 'DescribeSubnets', {
             'Filters': [{'Name': 'tag:Name', 'Values': ['my-subnet']}]
         }
-        self.provider.evaluate(test, self.provider.definition['subnets'], [])
+        self.provider.evaluate(test, self.provider.definitions['subnets'], [])
         mock_call.assert_called_once_with(*expected)
 
     @patch('virga.providers.aws.Provider.format_filters')
@@ -125,7 +125,7 @@ class TestAWS(TestCase):
         self.provider.action()
         self.assertEqual(3, mock_process.call_count)
 
-    @patch('virga.providers.aws.Provider.read_definition')
+    @patch('virga.providers.aws.Provider.read_definitions')
     def test_sample_invokes_read_definition(self, mock_read_definition, *args):
         mock_read_definition.return_value = fixture('valid-definition.yaml', get_yaml=True)
         self.provider.sample('subnets', 'subnet-123456')
@@ -187,20 +187,20 @@ class TestAWS(TestCase):
         ]
         self.assertListEqual(expected, self.provider.convert_struct(resource))
 
-    @patch('virga.providers.aws.Provider.read_definition')
+    @patch('virga.providers.aws.Provider.read_definitions')
     def test_sample_definition_not_found(self, mock_read_definition, *args):
         mock_read_definition.return_value = fixture('valid-definition.yaml', get_yaml=True)
         with self.assertRaisesRegex(VirgaException, 'Resource definition not found'):
             self.provider.sample('not_here', 'id-123456')
 
-    @patch('virga.providers.aws.Provider.read_definition')
+    @patch('virga.providers.aws.Provider.read_definitions')
     def test_sample_definition_is_virga_client(self, mock_read_definition, *args):
         mock_read_definition.return_value = fixture('valid-definition.yaml', get_yaml=True)
         with self.assertRaisesRegex(VirgaException, 'Resource sample for certificates not supported'):
             self.provider.sample('certificates', 'id-123456')
 
     @patch('virga.providers.aws.Provider.flatten_items')
-    @patch('virga.providers.aws.Provider.read_definition')
+    @patch('virga.providers.aws.Provider.read_definitions')
     def test_sample_resource_not_found(self, mock_read_definition, mock_flatten_items, *args):
         mock_read_definition.return_value = fixture('valid-definition.yaml', get_yaml=True)
         mock_flatten_items.return_value = []

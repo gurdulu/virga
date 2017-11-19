@@ -1,0 +1,9 @@
+---
+db_instances:
+  client: rds
+  action: describe_db_instances
+  context: RDS instances
+  prefix: DBInstances
+  resource_id: DBInstanceIdentifier
+  identifiers:
+    id: db-instance-id

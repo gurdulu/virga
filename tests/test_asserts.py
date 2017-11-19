@@ -20,7 +20,7 @@ class TestVirgaAsserts(TestCase):
         parser()
         mock_add_argument.assert_any_call('provider', choices=['aws', ], help='provider')
         mock_add_argument.assert_any_call('testfile', help='test file')
-        mock_add_argument.assert_any_call('-d', '--definition', help='custom definition file')
+        mock_add_argument.assert_any_call('-d', '--definitions', help='custom definitions path')
         mock_add_argument.assert_any_call('-l', '--logfile', help='redirect the output to a log file')
         mock_add_argument.assert_any_call('-s', '--silent', help='do not output results', action='store_true', default=False)
         mock_add_argument.assert_any_call('-o', '--output', help='save the resource info into the specified directory')

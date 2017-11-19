@@ -15,7 +15,7 @@ class Provider(AbstractProvider):
 
     def __init__(self, args: any):  # NOQA
         super(Provider, self).__init__(args)
-        self.definition_file = os.path.join(os.path.dirname(__file__), 'aws.yaml')
+        self.definitions_path = os.path.join(os.path.dirname(__file__), 'definitions')
 
     def process(self, resource_section: str, resource_object: dict, shared_messages: list) -> Process:
         """
@@ -28,7 +28,7 @@ class Provider(AbstractProvider):
         :param shared_messages: Shared messages managed list
         :return: The process instantiated
         """
-        resource_definition = self.definition[resource_section]
+        resource_definition = self.definitions[resource_section]
         process = Process(target=self.evaluate, args=(resource_object, resource_definition, shared_messages))
         process.start()
         return process
@@ -129,12 +129,12 @@ class Provider(AbstractProvider):
         :raises VirgaException: If the resource is not found
         """
         try:
-            resource_definition = self.definition[section]
+            resource_definition = self.definitions[section]
             response = self.client(resource_definition, {identifier: resource_id})
             items = self.flatten_items(response, resource_definition['prefix'])
             return items[0][resource_definition['resource_id']]
         except (KeyError, IndexError):
-            return 'Lookup %s %s %s failed' % (section, identifier, resource_id)
+            raise VirgaException('Lookup %s %s %s failed' % (section, identifier, resource_id))
 
     def sample(self, resource_type: str, resource_id: str) -> str:
         """
@@ -145,7 +145,7 @@ class Provider(AbstractProvider):
         :return: Test in YAML format
         """
         try:
-            definition = self.read_definition()[resource_type]
+            definition = self.definitions[resource_type]
         except KeyError:
             raise VirgaException('Resource definition not found')
         if definition['client'] == 'virga':

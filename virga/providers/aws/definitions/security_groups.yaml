@@ -1,0 +1,11 @@
+---
+security_groups:
+  client: ec2
+  action: describe_security_groups
+  context: Security Groups
+  prefix: SecurityGroups
+  resource_id: GroupId
+  identifiers:
+    id: group-id
+    name: tag:Name
+    group_name: group-name

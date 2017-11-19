@@ -8,6 +8,7 @@ import datetime
 import sys
 import unicodedata
 import jmespath
+import os
 import yaml
 
 
@@ -27,9 +28,9 @@ class AbstractProvider(object):
     def __init__(self, args: any):  # NOQA
         self.args = args
         self.tests = None
-        self.definition_file = None
+        self.definitions_path = None
         self._logger = None
-        self._definition = None
+        self._definitions = None
 
     def set_tests(self, tests: dict):
         """Set the test as separate process for making the class generic."""
@@ -66,19 +67,22 @@ class AbstractProvider(object):
         """Stub for obtaining resource samples."""
         raise NotImplementedError('Implement sample method')
 
-    def get_definition_file(self) -> str:
+    def get_definitions_path(self) -> str:
         """Workaround for having an abstract property."""
-        if self.definition_file is None:
+        if self.definitions_path is None:
             raise NotImplementedError('Implement definition_file property')
-        return self.definition_file
+        return self.definitions_path
 
-    def read_definition(self) -> dict:
-        """Read the definition."""
-        definition_file = self.get_definition_file()
-        if self.args.definition is not None:
-            definition_file = self.args.definition
-        with open(definition_file) as definition:
-            return yaml.load(definition)
+    def read_definitions(self) -> dict:
+        """Read the definitions."""
+        definitions_path = self.get_definitions_path()
+        if self.args.definitions is not None:
+            definitions_path = self.args.definitions
+        definitions = {}
+        for item in [x for x in os.listdir(definitions_path) if x.endswith('.yaml')]:
+            with open(os.path.join(definitions_path, item)) as definition:
+                definitions.update(yaml.load(definition))
+        return definitions
 
     @property
     def logger(self):
@@ -88,11 +92,11 @@ class AbstractProvider(object):
         return self._logger
 
     @property
-    def definition(self):
+    def definitions(self):
         """Definition property."""
-        if self._definition is None:
-            self._definition = self.read_definition()
-        return self._definition
+        if self._definitions is None:
+            self._definitions = self.read_definitions()
+        return self._definitions
 
     @staticmethod
     def set_logger(args: any):

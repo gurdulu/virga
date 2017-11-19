@@ -18,7 +18,7 @@ class TestAbstractProvider(TestCase):
             silent=True,
             logfile=None,
             output='/tmp',
-            definition='any'
+            definitions='any'
         )
         self.provider = MockProvider(self.arg_parse)
 
@@ -254,15 +254,16 @@ class TestAbstractProvider(TestCase):
         self.provider.assertion("AnyKey=='any-value'", 'Context', {}, 'resource-id')
         mock_outcome.assert_called_once_with(False)
 
+    @patch('os.listdir', return_value=['bare-valid.yaml'])
     @patch('builtins.open', new_callable=mock_open, read_data=fixture('bare-valid.yaml'))
     def test_definition_file(self, *args):
-        self.provider.definition_file = 'any'
-        self.assertDictEqual({'test': 'ok'}, self.provider.definition)
+        self.provider.definitions_path = 'any'
+        self.assertDictEqual({'test': 'ok'}, self.provider.definitions)
 
     @patch('builtins.open', new_callable=mock_open, read_data=fixture('bare-valid.yaml'))
     def test_definition_file_missing(self, *args):
         with self.assertRaisesRegex(NotImplementedError, 'Implement definition_file property'):
-            _ = self.provider.definition
+            _ = self.provider.definitions
 
     @patch('sys.stderr.write')
     @patch('sys.exit')

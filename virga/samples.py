@@ -15,7 +15,7 @@ def parser() -> any:
     arg_parser.add_argument('provider', help='Provider')
     arg_parser.add_argument('section', help='Section')
     arg_parser.add_argument('resource', help='Resource ID')
-    arg_parser.add_argument('-d', '--definition', help='Definition file')
+    arg_parser.add_argument('-d', '--definitions', help='Definitions path')
     return arg_parser.parse_args()
 
 

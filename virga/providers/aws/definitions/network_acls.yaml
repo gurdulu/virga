@@ -1,0 +1,10 @@
+---
+network_acls:
+  client: ec2
+  action: describe_network_acls
+  context: Network ACLs
+  prefix: NetworkAcls
+  resource_id: NetworkAclId
+  identifiers:
+    id: network-acl-id
+    name: tag:Name

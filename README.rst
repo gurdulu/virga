@@ -67,7 +67,7 @@ Following the list of options of virga-asserts
 
 .. code::bash
 
-    usage: virga-asserts [-h] [-d DEFINITION] [-l LOGFILE] [-s] [-o OUTPUT] [--debug] {aws} testfile
+    usage: virga-asserts [-h] [-d DEFINITIONS] [-l LOGFILE] [-s] [-o OUTPUT] [--debug] {aws} testfile
 
     positional arguments:
       {aws}                 provider
@@ -75,8 +75,8 @@ Following the list of options of virga-asserts
 
     optional arguments:
       -h, --help            show this help message and exit
-      -d DEFINITION, --definition DEFINITION
-                            custom definition file
+      -d DEFINITIONS, --definition DEFINITIONS
+                            custom definitions path
       -l LOGFILE, --logfile LOGFILE
                             redirect the output to a log file
       -s, --silent          do not output results
@@ -100,7 +100,9 @@ The (**tests**) are specific to the tests we want to implement.
 Definitions
 ===========
 
-The **definitions** describe the way we want to obtain information about a specific resource type
+The **definitions** describe the way we want to obtain information about a specific resource type.
+
+Each YAML file in the definitions directory is read and assembled into the collective **definitions**.
 
 .. code-block::yaml
 
@@ -113,6 +115,9 @@ The **definitions** describe the way we want to obtain information about a speci
       identifiers:
         id: subnet-id
         name: tag:Name
+
+.. code-block::yaml
+
     instances:
       client: ec2
       action: describe_instances
@@ -124,15 +129,17 @@ The **definitions** describe the way we want to obtain information about a speci
         name: tag:Name
 
 
-In the configuration above (see `<virga/providers/aws/aws.yaml>`_) we say that for the ``subnets`` section we are going
-to instantiate a *client* and invoke an *action* identifying the resources we want to filter with **id** or with **name**.
+In the configurations above (see `<virga/providers/aws/definitions/subnets.yaml>`_ and
+`<virga/providers/aws/definitions/instances.yaml>`_) we declare that for the ``subnets`` section we are going
+to instantiate a *client* and invoke an *action* identifying the resources we want to filter with **id** or with
+**name**.
 
 The same concept is applied to the ``instances`` section.
 
 The **definitions** are unlikely to be changed as contain information depending on the underlying library (in this
 case boto3_).
 
-The default definition file can be overridden with the option ``--definition``.
+The default definitions path can be overridden with the option ``--definitions``.
 
 Tests file
 ==========

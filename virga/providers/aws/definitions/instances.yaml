@@ -1,0 +1,10 @@
+---
+instances:
+  client: ec2
+  action: describe_instances
+  context: EC2 Instances
+  prefix: Reservations.Instances
+  resource_id: InstanceId
+  identifiers:
+    id: instance-id
+    name: tag:Name

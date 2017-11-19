@@ -14,7 +14,7 @@ def parser() -> any:
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('provider', choices=['aws', ], help='provider')
     arg_parser.add_argument('testfile', help='test file')
-    arg_parser.add_argument('-d', '--definition', help='custom definition file')
+    arg_parser.add_argument('-d', '--definitions', help='custom definitions path')
     arg_parser.add_argument('-l', '--logfile', help='redirect the output to a log file')
     arg_parser.add_argument('-s', '--silent', help='do not output results', action='store_true', default=False)
     arg_parser.add_argument('-o', '--output', help='save the resource info into the specified directory')

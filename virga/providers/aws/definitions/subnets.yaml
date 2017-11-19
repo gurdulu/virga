@@ -1,0 +1,10 @@
+---
+subnets:
+  client: ec2
+  action: describe_subnets
+  context: Subnets
+  prefix: Subnets
+  resource_id: SubnetId
+  identifiers:
+    id: subnet-id
+    name: tag:Name
