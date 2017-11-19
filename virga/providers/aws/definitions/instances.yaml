@@ -8,12 +8,3 @@ instances:
   identifiers:
     id: instance-id
     name: tag:Name
-amis:
-  client: ec2
-  action: describe_images
-  context: AMI
-  prefix: Images
-  resource_id: ImageId
-  identifiers:
-    id: image-id
-    name: name

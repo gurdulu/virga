@@ -1,0 +1,9 @@
+---
+auto_scaling:
+  client: virga
+  action: find_autoscaling_group
+  context: Auto Scaling Group
+  prefix: AutoScalingGroups
+  resource_id: AutoScalingGroupARN
+  identifiers:
+    name: name
