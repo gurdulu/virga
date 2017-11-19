@@ -31,8 +31,33 @@ class VirgaClient(object):
         """
         Call boto3/elbv2 for finding the ELBv2 instance by name.
 
+        The result contains:
+        - load balancer attributes
+        - listeners
+        - target groups
+        - target group attributes
+
         :param resource_object: Object filter
         :return: Response from AWS
         """
         client = boto3.client('elbv2')
-        return client.describe_load_balancers(Names=[resource_object['name']])
+        try:
+            resource = client.describe_load_balancers(Names=[resource_object['name']])
+            arn = resource['LoadBalancers'][0]['LoadBalancerArn']
+
+            attributes = client.describe_load_balancer_attributes(LoadBalancerArn=arn)
+            resource['LoadBalancers'][0]['Attributes'] = attributes['Attributes']
+            listeners = client.describe_listeners(LoadBalancerArn=arn)
+            resource['LoadBalancers'][0]['Listeners'] = listeners['Listeners']
+            target_groups = client.describe_target_groups(LoadBalancerArn=arn)
+            result_target_group = []
+            for target_group in target_groups['TargetGroups']:
+                attributes = client.describe_target_group_attributes(
+                    TargetGroupArn=target_group['TargetGroupArn'])['Attributes']
+                target_group['Attributes'] = attributes
+                result_target_group.append(target_group)
+            resource['LoadBalancers'][0]['TargetGroups'] = result_target_group
+            return resource
+        except (KeyError, IndexError):
+            raise VirgaException(
+                'Lookup %s %s %s failed' % ('elbv2', 'name', resource_object['name']))
