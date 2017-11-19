@@ -22,7 +22,8 @@ class TestAWS(TestCase):
 
     def test_lookup_failure(self, mock_call):
         mock_call.return_value = fixture('empty-subnet.json', get_json=True)
-        self.assertEqual('Lookup subnets name no-subnet failed', self.provider.lookup('subnets', 'name', 'no-subnet'))
+        with self.assertRaisesRegex(VirgaException, 'Lookup subnets name no-subnet failed'):
+            self.provider.lookup('subnets', 'name', 'no-subnet')
 
     def test_flatten_items(self, *args):
         response = fixture('reservations-instances.json', get_json=True)
@@ -33,14 +34,14 @@ class TestAWS(TestCase):
     def test_format_filters(self, *args):
         definition = {'identifiers': {'id': 'resource-id', 'name': 'tag:Name'}}
         test = {'name': 'resource-name'}
-        expected = [{'Name': 'tag:Name', 'Values': ['resource-name']}]
-        self.assertListEqual(expected, self.provider.format_filters(definition, test))
+        expected = {'Name': 'tag:Name', 'Values': ['resource-name']}
+        self.assertDictEqual(expected, self.provider.format_filter(definition, test))
 
     def test_format_filters_invalid_configuration(self, *args):
         definition = {'identifiers': {'id': 'resource-id', 'name': 'tag:Name'}}
         test = {'another-key': 'resource-name'}
         with self.assertRaisesRegex(VirgaException, 'Invalid configuration'):
-            self.provider.format_filters(definition, test)
+            self.provider.format_filter(definition, test)
 
     def test_evaluate_no_assertions_calls_aws(self, mock_call):
         test = {
@@ -53,8 +54,8 @@ class TestAWS(TestCase):
         self.provider.evaluate(test, self.provider.definitions['subnets'], [])
         mock_call.assert_called_once_with(*expected)
 
-    @patch('virga.providers.aws.Provider.format_filters')
-    def test_evaluate_no_assertions_calls_format_filters(self, mock_format_filters, *args):
+    @patch('virga.providers.aws.Provider.format_filter')
+    def test_evaluate_no_assertions_calls_format_filter(self, mock_format_filter, *args):
         test = {
             'name': 'my-subnet',
             'assertions': []
@@ -71,7 +72,7 @@ class TestAWS(TestCase):
             }
         }
         self.provider.evaluate(test, definition, [])
-        mock_format_filters.assert_called_once_with(definition, {'name': 'my-subnet', 'assertions': []})
+        mock_format_filter.assert_called_with(definition, {'name': 'my-subnet', 'assertions': []})
 
     @patch('virga.providers.abstract.AbstractProvider.assertion')
     def test_evaluate_no_assertions_calls_assertion(self, mock_assertion, mock_call):
@@ -114,8 +115,8 @@ class TestAWS(TestCase):
             ]
         }
         expected = [
-            call("AvailabilityZone=='eu-west-2a'", 'Subnets', subnet_data, 'subnet-0123456789'),
-            call("CidrBlock=='10.0.0.0/24'", 'Subnets', subnet_data, 'subnet-0123456789')
+            call("AvailabilityZone=='eu-west-2a'", 'Subnets', subnet_data, 'subnet-0123456789', "tag:Name: ['my-subnet']"),
+            call("CidrBlock=='10.0.0.0/24'", 'Subnets', subnet_data, 'subnet-0123456789', "tag:Name: ['my-subnet']")
         ]
         mock_assertion.assert_has_calls(expected, any_order=True)
 
@@ -210,9 +211,9 @@ class TestAWS(TestCase):
     def test_find_certificate_no_certificates_found(self, mock_call):
         mock_call.side_effect = [{}, {}]
         with self.assertRaisesRegex(VirgaException, 'Lookup certificates domain_name any-domain.it failed'):
-            VirgaClient.find_certificate({}, {'domain_name': 'any-domain.it'})
+            VirgaClient.find_certificate({'domain_name': 'any-domain.it'})
 
     def test_find_certificate_no_domain_found(self, mock_call):
         mock_call.side_effect = [{'CertificateSummaryList': [{'DomainName': 'any-domain.it'}]}, IndexError()]
         with self.assertRaisesRegex(VirgaException, 'Lookup certificates domain_name any-domain.it failed'):
-            VirgaClient.find_certificate({}, {'domain_name': 'any-domain.it'})
+            VirgaClient.find_certificate({'domain_name': 'any-domain.it'})

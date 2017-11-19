@@ -6,4 +6,4 @@ certificates:
   prefix: Certificate
   resource_id: CertificateArn
   identifiers:
-    id: domain-name
+    domain_name: domain-name

@@ -1,0 +1,9 @@
+---
+elbv2:
+  client: virga
+  action: find_elbv2
+  context: ELB v2
+  prefix: LoadBalancers
+  resource_id: LoadBalancerArn
+  identifiers:
+    name: name

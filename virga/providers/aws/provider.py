@@ -46,10 +46,10 @@ class Provider(AbstractProvider):
         """
         if resource_definition['client'] == 'virga':
             client = VirgaClient()
-            return getattr(client, resource_definition['action'])(resource_definition, resource_object)
+            return getattr(client, resource_definition['action'])(resource_object)
         client = boto3.client(resource_definition['client'])
-        filters = self.format_filters(resource_definition, resource_object)
-        return getattr(client, resource_definition['action'])(Filters=filters)
+        formatted_filter = self.format_filter(resource_definition, resource_object)
+        return getattr(client, resource_definition['action'])(Filters=[formatted_filter])
 
     def evaluate(self, resource_object: dict, resource_definition: dict, shared_messages: list):
         """
@@ -61,10 +61,12 @@ class Provider(AbstractProvider):
         """
         response = self.client(resource_definition, resource_object)
         items = self.flatten_items(response, resource_definition['prefix'])
+        formatted_filter = self.format_filter(resource_definition, resource_object)
+        identifier = '%s: %s' % (formatted_filter['Name'], formatted_filter['Values'])
         for resource in items:
             resource_id = resource[resource_definition['resource_id']]
             for test in resource_object['assertions']:
-                outcome = self.assertion(test, resource_definition['context'], resource, resource_id)
+                outcome = self.assertion(test, resource_definition['context'], resource, resource_id, identifier)
                 shared_messages.append(outcome)
 
     def action(self):
@@ -91,18 +93,17 @@ class Provider(AbstractProvider):
             self.result(shared_messages)
 
     @staticmethod
-    def format_filters(definition: dict, test: dict) -> list:
+    def format_filter(definition: dict, test: dict) -> dict:
         """
         Format the filter for query the resources.
 
         :param definition: Resource definition
-        :param test:
+        :param test: Test definition
+        :return: The filter
         """
         try:
             filter_key = [x for x in definition['identifiers'].keys() if x in test.keys()][0]
-            return [{
-                'Name': definition['identifiers'][filter_key], 'Values': [test[filter_key]]
-            }]
+            return {'Name': definition['identifiers'][filter_key], 'Values': [test[filter_key]]}
         except (KeyError, IndexError):
             raise VirgaException('Invalid configuration')
 

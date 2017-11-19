@@ -7,8 +7,8 @@ import re
 import datetime
 import sys
 import unicodedata
-import jmespath
 import os
+import jmespath
 import yaml
 
 
@@ -223,7 +223,7 @@ class AbstractProvider(object):
             with open('%s/%s.json' % (self.args.output, slugify(resource_id)), 'w') as p_file:
                 json.dump(resource, p_file, indent=2, default=handler)
 
-    def assertion(self, test: str, context: str, resource: dict, resource_id: str) -> dict:
+    def assertion(self, test: str, context: str, resource: dict, resource_id: str, identifier: str) -> dict:
         """
         The actual query.
 
@@ -237,6 +237,7 @@ class AbstractProvider(object):
         :param context: Label of the section
         :param resource: The resource to analyse
         :param resource_id: The resource ID
+        :param identifier: String identifying the resource queried
         :return: The outcome
         """
         # output call at this point is a compromise for avoiding circular dependencies
@@ -244,15 +245,15 @@ class AbstractProvider(object):
         test = self._lookup(test)
         result = jmespath.search(test, resource)
         success = self.outcome(result)
-        message = '%s: %s eval %s == %s' % (resource_id, test, str(result), success)
-        self.logger.debug(message)
+        test_message = '%s: %s eval %s == %s' % (resource_id, test, str(result), success)
+        self.logger.debug(test_message)
+
+        message = \
+            'Context: %(context)s - ID: %(resource)s\n' \
+            '    Identifier: %(identifier)s - Test: %(test)s'
 
         outcome = {
-            'message': 'Context: %(context)s - ID: %(resource)s - Test: %(test)s' % dict(
-                context=context,
-                resource=resource_id,
-                test=test
-            ),
+            'message': message % dict(context=context, resource=resource_id, test=test, identifier=identifier),
             'debug': resource,
             'success': success,
             'level': SUCCESS if success else logging.ERROR,
