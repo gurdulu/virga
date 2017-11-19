@@ -72,3 +72,15 @@ class VirgaClient(object):
         """
         client = boto3.client('autoscaling')
         return client.describe_auto_scaling_groups(AutoScalingGroupNames=[resource_object['name']])
+
+    @staticmethod
+    def find_cloudtrail(resource_object: dict) -> dict:
+        """
+        Call boto3/acm for finding the CloudTrail trail by name.
+
+        :param resource_object: Object filter
+        :return: Response from AWS
+        """
+        client = boto3.client('cloudtrail')
+        response = client.describe_trails()
+        return {'trailList': list(filter(lambda d: d['Name'] == resource_object['name'], response['trailList']))}
