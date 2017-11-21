@@ -4,8 +4,9 @@ python:
 install:
   - pip install -r requirements.txt
 env:
-  - AWS_DEFAULT_REGION=eu-west-2
-  - CC_TEST_REPORTER_ID=b858d79e55401a444fc6a05cc1c42ba4fcf949354f59f698175c0da6be8d470c
+  global:
+    - AWS_DEFAULT_REGION=eu-west-2
+    - CC_TEST_REPORTER_ID=b858d79e55401a444fc6a05cc1c42ba4fcf949354f59f698175c0da6be8d470c
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
