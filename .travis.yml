@@ -2,7 +2,7 @@ language: python
 python:
   - "3.6"
 install:
-  - pip install -r requirements.txt
+  - pip install -r requirements-dev.txt
 env:
   global:
     - AWS_DEFAULT_REGION=eu-west-2
@@ -12,6 +12,6 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 script:
-  - pytest
+  - pytest --cov
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
