@@ -15,7 +15,9 @@ Virga tests your Cloud resources.
 .. image:: https://api.codeclimate.com/v1/badges/a8608c689cec6ff7da0f/maintainability
    :target: https://codeclimate.com/github/gurdulu/virga/maintainability
    :alt: Maintainability
-
+.. image:: https://api.codeclimate.com/v1/badges/a8608c689cec6ff7da0f/test_coverage
+   :target: https://codeclimate.com/github/gurdulu/virga/test_coverage
+   :alt: Test Coverage
 
 -------------
 What is Virga
