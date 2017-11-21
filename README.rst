@@ -12,6 +12,10 @@ Virga tests your Cloud resources.
 
 .. image:: https://travis-ci.org/gurdulu/virga.svg?branch=master
    :alt: Travis CI
+.. image:: https://api.codeclimate.com/v1/badges/a8608c689cec6ff7da0f/maintainability
+   :target: https://codeclimate.com/github/gurdulu/virga/maintainability
+   :alt: Maintainability
+
 
 -------------
 What is Virga
