@@ -9,6 +9,10 @@ Virga
 
 Virga tests your Cloud resources.
 
+
+.. image:: https://travis-ci.org/gurdulu/virga.svg?branch=master
+   :alt: Travis CI
+
 -------------
 What is Virga
 -------------
