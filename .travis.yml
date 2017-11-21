@@ -14,4 +14,4 @@ before_script:
 script:
   - pytest --cov=virga tests
 after_script:
-  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT --file .coverage
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT -t coverage.py
