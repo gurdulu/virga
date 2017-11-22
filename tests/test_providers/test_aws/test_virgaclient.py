@@ -21,3 +21,8 @@ class TestVirgaClient(TestCase):
         mock_list_certificate.return_value = {'CertificateSummaryList': []}
         with self.assertRaisesRegex(VirgaException, 'Lookup certificates domain_name my.any-domain.com failed'):
             VirgaClient.find_certificate({'domain_name': 'my.any-domain.com'})
+
+    def test_find_elbv2_call_sequence(self, mock_call):
+        mock_call.side_effect = [
+            responses.elbv2_describe_load_balancers,
+        ]

@@ -4,11 +4,11 @@ import os
 import yaml
 from unittest.mock import MagicMock
 
-fixtures = os.path.join(os.path.dirname(__file__), 'fixtures')
+fixtures_dir = os.path.join(os.path.dirname(__file__), 'fixtures')
 
 
 def fixture(filename, get_yaml=False, get_json=False):
-    with open(os.path.join(fixtures, filename)) as f:
+    with open(os.path.join(fixtures_dir, filename)) as f:
         if get_yaml:
             return yaml.load(f)
         elif get_json:
