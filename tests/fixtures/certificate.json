@@ -1,0 +1,33 @@
+{
+  "CertificateArn": "arn:aws:acm:eu-west-2:012345678:certificate/01234567-abcd-0123-0123-abcdfe01234",
+  "DomainName": "my.any-domain.com",
+  "SubjectAlternativeNames": [
+    "my.any-domain.com"
+  ],
+  "DomainValidationOptions": [
+    {
+      "DomainName": "my.any-domain.com",
+      "ValidationEmails": [
+        "hostmaster@any-domain.com",
+        "admin@any-domain.com",
+        "webmaster@any-domain.com",
+        "postmaster@any-domain.com",
+        "administrator@any-domain.com"
+      ],
+      "ValidationDomain": "any-domain.com",
+      "ValidationStatus": "SUCCESS"
+    }
+  ],
+  "Serial": "00:11:22:33:44:55:66:77:88:99:aa:bb:cc:dd:ee:ff",
+  "Subject": "CN=my.any-domain.com",
+  "Issuer": "Amazon",
+  "CreatedAt": "2017-01-11T09:23:40+01:00",
+  "IssuedAt": "2017-01-11T09:25:15+01:00",
+  "Status": "ISSUED",
+  "NotBefore": "2017-01-12T01:00:00+01:00",
+  "NotAfter": "2018-01-12T13:00:00+01:00",
+  "KeyAlgorithm": "RSA-2048",
+  "SignatureAlgorithm": "SHA256WITHRSA",
+  "InUseBy": [],
+  "Type": "AMAZON_ISSUED"
+}

@@ -2,6 +2,7 @@ from unittest import TestCase
 from unittest.mock import patch
 
 from tests import MockProvider
+from virga.common import VirgaException
 from virga.samples import parser, samples
 
 
@@ -19,7 +20,14 @@ class TestVirgaSamples(TestCase):
 
     @patch('virga.samples.parser')
     @patch('virga.samples.get_provider_class')
-    def test_samples_invoke_class_samples(self, get_provider_class, *args):
-        get_provider_class.return_value = MockProvider()
+    def test_samples_invoke_class_samples(self, mock_get_provider_class, *args):
+        mock_get_provider_class.return_value = MockProvider()
         samples()
-        get_provider_class.return_value.sample.assert_called_once()
+        mock_get_provider_class.return_value.sample.assert_called_once()
+
+    @patch('virga.samples.parser')
+    def test_any_virga_exception_is_caught(self, mock_parser):
+        mock_parser.side_effect = VirgaException('Any exception')
+        with self.assertRaises(SystemExit) as ex:
+            samples()
+        self.assertEqual(1, ex.exception.code)
