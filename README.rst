@@ -77,7 +77,7 @@ Options
 
 Following the list of options of virga-asserts
 
-.. code::bash
+.. code::
 
     usage: virga-asserts [-h] [-d DEFINITIONS] [-l LOGFILE] [-s] [-o OUTPUT] [--debug] {aws} testfile
 
