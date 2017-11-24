@@ -116,7 +116,7 @@ The **definitions** describe the way we want to obtain information about a speci
 
 Each YAML file in the definitions directory is read and assembled into the collective **definitions**.
 
-.. code-block::yaml
+.. code-block::
 
     subnets:
       client: ec2
@@ -128,7 +128,7 @@ Each YAML file in the definitions directory is read and assembled into the colle
         id: subnet-id
         name: tag:Name
 
-.. code-block::yaml
+.. code-block::
 
     instances:
       client: ec2
