@@ -77,7 +77,7 @@ Options
 
 Following the list of options of virga-asserts
 
-.. code::
+.. code:: bash
 
     usage: virga-asserts [-h] [-d DEFINITIONS] [-l LOGFILE] [-s] [-o OUTPUT] [--debug] {aws} testfile
 
@@ -116,7 +116,7 @@ The **definitions** describe the way we want to obtain information about a speci
 
 Each YAML file in the definitions directory is read and assembled into the collective **definitions**.
 
-.. code-block::
+.. code-block:: yaml
 
     subnets:
       client: ec2
@@ -128,7 +128,7 @@ Each YAML file in the definitions directory is read and assembled into the colle
         id: subnet-id
         name: tag:Name
 
-.. code-block::
+.. code-block:: yaml
 
     instances:
       client: ec2
@@ -185,7 +185,7 @@ The keys *id* and *subnets* are identifiers declared in the definitions file.
 The ``assertions`` are the actual tests: each item represents a condition to verify using the query language
 JMESPath_. The only exception is the last assertion
 
-.. code::yaml
+.. code:: yaml
 
     SubnetId=="_lookup('subnets', 'name', 'my-subnet')"
 
@@ -198,7 +198,7 @@ The ``_lookup`` function filters a single resource returning the ID.
 
 In the example above instead of declaring the equality
 
-.. code::yaml
+.. code:: yaml
 
     SubnetId=="subnet-0123456789"
 
