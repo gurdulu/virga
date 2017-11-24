@@ -15,7 +15,8 @@ class TestVirgaClient(TestCase):
             responses.acm_certificate_list,
             fixture('certificate.json', get_json=True)
         ]
-        VirgaClient.find_certificate({'domain_name': 'my.any-domain.com'})
+        expected = responses.acm_result_find_certificate
+        self.assertDictEqual(expected, VirgaClient.find_certificate({'domain_name': 'my.any-domain.com'}))
 
     def test_find_certificate_domain_not_found(self, mock_list_certificate):
         mock_list_certificate.return_value = {'CertificateSummaryList': []}
@@ -25,4 +26,20 @@ class TestVirgaClient(TestCase):
     def test_find_elbv2_call_sequence(self, mock_call):
         mock_call.side_effect = [
             responses.elbv2_describe_load_balancers,
+            responses.elbv2_describe_load_balancer_attributes,
+            responses.elbv2_describe_listeners,
+            responses.elbv2_describe_target_groups,
+            responses.elbv2_describe_target_group_attributes,
         ]
+        expected = responses.elbv2_result
+        self.assertDictEqual(expected, VirgaClient.find_elbv2({'name': 'my-elbv2'}))
+
+    def test_find_elbv2_index_error(self, mock_call):
+        mock_call.side_effect = IndexError()
+        with self.assertRaisesRegex(VirgaException, 'Lookup elbv2 name my-elbv2 failed'):
+            VirgaClient.find_elbv2({'name': 'my-elbv2'})
+
+    def test_find_elbv2_key_error(self, mock_call):
+        mock_call.side_effect = KeyError()
+        with self.assertRaisesRegex(VirgaException, 'Lookup elbv2 name my-elbv2 failed'):
+            VirgaClient.find_elbv2({'name': 'my-elbv2'})
