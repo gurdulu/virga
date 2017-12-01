@@ -6,5 +6,9 @@ subnets:
   prefix: Subnets
   resource_id: SubnetId
   identifiers:
-    id: subnet-id
-    name: tag:Name
+    id:
+      key: subnet-id
+      type: filter
+    name:
+      key: tag:Name
+      type: filter

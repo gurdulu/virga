@@ -6,4 +6,6 @@ cloudtrails:
   prefix: trailList
   resource_id: Name
   identifiers:
-    name: name
+    name:
+      key: name
+      type: string

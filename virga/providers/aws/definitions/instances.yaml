@@ -6,5 +6,9 @@ instances:
   prefix: Reservations.Instances
   resource_id: InstanceId
   identifiers:
-    id: instance-id
-    name: tag:Name
+    id:
+      key: instance-id
+      type: filter
+    name:
+      key: tag:Name
+      type: filter

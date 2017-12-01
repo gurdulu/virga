@@ -6,8 +6,12 @@ subnets:
   prefix: Subnets
   resource_id: SubnetId
   identifiers:
-    id: subnet-id
-    name: tag:Name
+    id:
+      key: subnet-id
+      type: filter
+    name:
+      key: tag:Name
+      type: filter
 certificates:
   client: virga
   action: find_certificate
@@ -15,4 +19,6 @@ certificates:
   prefix: Certificate
   resource_id: CertificateArn
   identifiers:
-    id: domain-name
+    id:
+      key: domain-name
+      type: filter

@@ -6,4 +6,6 @@ db_instances:
   prefix: DBInstances
   resource_id: DBInstanceIdentifier
   identifiers:
-    id: db-instance-id
+    id:
+      key: db-instance-id
+      type: filter

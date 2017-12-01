@@ -32,13 +32,23 @@ class TestAWS(TestCase):
         self.assertListEqual(expected, result)
 
     def test_format_filters(self, *args):
-        definition = {'identifiers': {'id': 'resource-id', 'name': 'tag:Name'}}
+        definition = {
+            'identifiers': {
+                'id': {'key': 'resource-id', 'type': 'filter'},
+                'name': {'key': 'tag:Name', 'type': 'filter'}
+            }
+        }
         test = {'name': 'resource-name'}
-        expected = {'Name': 'tag:Name', 'Values': ['resource-name']}
+        expected = {'Filters': [{'Name': 'tag:Name', 'Values': ['resource-name']}]}
         self.assertDictEqual(expected, self.provider.format_filter(definition, test))
 
     def test_format_filters_invalid_configuration(self, *args):
-        definition = {'identifiers': {'id': 'resource-id', 'name': 'tag:Name'}}
+        definition = {
+            'identifiers': {
+                'id': {'key': 'resource-id', 'type': 'filter'},
+                'name': {'key': 'tag:Name', 'type': 'filter'}
+            }
+        }
         test = {'another-key': 'resource-name'}
         with self.assertRaisesRegex(VirgaException, 'Invalid configuration'):
             self.provider.format_filter(definition, test)
@@ -91,8 +101,14 @@ class TestAWS(TestCase):
             'prefix': 'Subnets',
             'resource_id': 'SubnetId',
             'identifiers': {
-                'id': 'subnet-id',
-                'name': 'tag:Name'
+                'id': {
+                    'key': 'subnet-id',
+                    'type': 'filter'
+                },
+                'name': {
+                    'key': 'tag:Name',
+                    'type': 'filter'
+                }
             }
         }
 
@@ -115,8 +131,8 @@ class TestAWS(TestCase):
             ]
         }
         expected = [
-            call("AvailabilityZone=='eu-west-2a'", 'Subnets', subnet_data, 'subnet-0123456789', "tag:Name: ['my-subnet']"),
-            call("CidrBlock=='10.0.0.0/24'", 'Subnets', subnet_data, 'subnet-0123456789', "tag:Name: ['my-subnet']")
+            call("AvailabilityZone=='eu-west-2a'", 'Subnets', subnet_data, 'subnet-0123456789'),
+            call("CidrBlock=='10.0.0.0/24'", 'Subnets', subnet_data, 'subnet-0123456789')
         ]
         mock_assertion.assert_has_calls(expected, any_order=True)
 

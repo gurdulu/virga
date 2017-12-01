@@ -6,6 +6,12 @@ security_groups:
   prefix: SecurityGroups
   resource_id: GroupId
   identifiers:
-    id: group-id
-    name: tag:Name
-    group_name: group-name
+    id:
+      key: group-id
+      type: filter
+    name:
+      key: tag:Name
+      type: filter
+    group_name:
+      key: group-name
+      type: filter

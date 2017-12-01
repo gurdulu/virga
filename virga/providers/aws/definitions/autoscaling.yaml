@@ -6,4 +6,6 @@ auto_scaling:
   prefix: AutoScalingGroups
   resource_id: AutoScalingGroupARN
   identifiers:
-    name: name
+    name:
+      key: name
+      type: string

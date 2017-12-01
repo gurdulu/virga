@@ -6,5 +6,9 @@ route_tables:
   prefix: RouteTables
   resource_id: RouteTableId
   identifiers:
-    id: route-table-id
-    name: tag:Name
+    id:
+      key: route-table-id
+      type: filter
+    name:
+      key: tag:Name
+      type: filter

@@ -6,5 +6,9 @@ network_acls:
   prefix: NetworkAcls
   resource_id: NetworkAclId
   identifiers:
-    id: network-acl-id
-    name: tag:Name
+    id:
+      key: network-acl-id
+      type: filter
+    name:
+      key: tag:Name
+      type: filter

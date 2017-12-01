@@ -6,4 +6,6 @@ elbv2:
   prefix: LoadBalancers
   resource_id: LoadBalancerArn
   identifiers:
-    name: name
+    name:
+      key: name
+      type: string

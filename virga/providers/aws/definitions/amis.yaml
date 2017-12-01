@@ -6,5 +6,9 @@ amis:
   prefix: Images
   resource_id: ImageId
   identifiers:
-    id: image-id
-    name: name
+    id:
+      key: image-id
+      type: filter
+    name:
+      key: name
+      type: filter
