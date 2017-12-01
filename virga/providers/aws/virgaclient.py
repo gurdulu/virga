@@ -68,17 +68,6 @@ class VirgaClient(object):
                 'Lookup %s %s %s failed' % ('elbv2', 'name', resource_object['name']))
 
     @staticmethod
-    def find_autoscaling_group(resource_object: dict) -> dict:
-        """
-        Call boto3/acm for finding the auto scaling group from the name.
-
-        :param resource_object: Object filter
-        :return: Response from AWS
-        """
-        client = boto3.client('autoscaling')
-        return client.describe_auto_scaling_groups(AutoScalingGroupNames=[resource_object['name']])
-
-    @staticmethod
     def find_cloudtrail(resource_object: dict) -> dict:
         """
         Call boto3/acm for finding the CloudTrail trail by name.

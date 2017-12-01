@@ -105,6 +105,8 @@ class Provider(AbstractProvider):
             identifier = definition['identifiers'][filter_key]
             if identifier['type'] == 'filter':
                 result = {'Filters': [{'Name': identifier['key'], 'Values': [test[filter_key]]}]}
+            elif identifier['type'] == 'list':
+                result = {identifier['key']: [test[filter_key]]}
             return result
         except (KeyError, IndexError):
             raise VirgaException('Invalid configuration')

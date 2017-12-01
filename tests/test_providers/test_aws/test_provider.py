@@ -31,7 +31,7 @@ class TestAWS(TestCase):
         expected = fixture('only-instances.json', get_json=True)
         self.assertListEqual(expected, result)
 
-    def test_format_filters(self, *args):
+    def test_format_filters_type_filter(self, *args):
         definition = {
             'identifiers': {
                 'id': {'key': 'resource-id', 'type': 'filter'},
@@ -40,6 +40,17 @@ class TestAWS(TestCase):
         }
         test = {'name': 'resource-name'}
         expected = {'Filters': [{'Name': 'tag:Name', 'Values': ['resource-name']}]}
+        self.assertDictEqual(expected, self.provider.format_filter(definition, test))
+
+    def test_format_filters_type_list(self, *args):
+        definition = {
+            'identifiers': {
+                'id': {'key': 'resource-id', 'type': 'filter'},
+                'name': {'key': 'Names', 'type': 'list'}
+            }
+        }
+        test = {'name': 'resource-name'}
+        expected = {'Names': ['resource-name']}
         self.assertDictEqual(expected, self.provider.format_filter(definition, test))
 
     def test_format_filters_invalid_configuration(self, *args):
@@ -77,8 +88,8 @@ class TestAWS(TestCase):
             'prefix': 'Subnets',
             'resource_id': 'SubnetId',
             'identifiers': {
-                'id': 'subnet-id',
-                'name': 'tag:Name'
+                'id': {'key': 'subnet-id', 'type': 'filter'},
+                'name': {'key': 'tag:Name', 'type': 'filter'}
             }
         }
         self.provider.evaluate(test, definition, [])
@@ -101,14 +112,8 @@ class TestAWS(TestCase):
             'prefix': 'Subnets',
             'resource_id': 'SubnetId',
             'identifiers': {
-                'id': {
-                    'key': 'subnet-id',
-                    'type': 'filter'
-                },
-                'name': {
-                    'key': 'tag:Name',
-                    'type': 'filter'
-                }
+                'id': {'key': 'subnet-id', 'type': 'filter'},
+                'name': {'key': 'tag:Name', 'type': 'filter'}
             }
         }
 
