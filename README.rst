@@ -9,17 +9,13 @@ Virga
 
 Virga tests your Cloud resources.
 
+.. raw:: html
 
-.. image:: https://travis-ci.org/gurdulu/virga.svg?branch=master
-   :alt: Travis CI
-
-.. image:: https://api.codeclimate.com/v1/badges/a8608c689cec6ff7da0f/maintainability
-   :target: https://codeclimate.com/github/gurdulu/virga/maintainability
-   :alt: Maintainability
-
-.. image:: https://api.codeclimate.com/v1/badges/a8608c689cec6ff7da0f/test_coverage
-   :target: https://codeclimate.com/github/gurdulu/virga/test_coverage
-   :alt: Test Coverage
+    <img src="https://travis-ci.org/gurdulu/virga.svg?branch=master" alt="Travis CI" />
+    <a href="https://codeclimate.com/github/gurdulu/virga/maintainability"><img
+    src="https://api.codeclimate.com/v1/badges/a8608c689cec6ff7da0f/maintainability" /></a>
+    <a href="https://codeclimate.com/github/gurdulu/virga/test_coverage"><img
+    src="https://api.codeclimate.com/v1/badges/a8608c689cec6ff7da0f/test_coverage" /></a>
 
 -------------
 What is Virga
