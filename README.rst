@@ -121,8 +121,12 @@ Each YAML file in the definitions directory is read and assembled into the colle
       prefix: Subnets
       resource_id: SubnetId
       identifiers:
-        id: subnet-id
-        name: tag:Name
+        id:
+          key: subnet-id
+          type: filter
+        name:
+          key: tag:Name
+          type: filter
 
 .. code-block:: yaml
 
@@ -133,8 +137,12 @@ Each YAML file in the definitions directory is read and assembled into the colle
       prefix: Reservations.Instances
       resource_id: InstanceId
       identifiers:
-        id: instance-id
-        name: tag:Name
+        id:
+          key: instance-id
+          type: filter
+        name:
+          key: tag:Name
+          type: filter
 
 
 In the configurations above (see `<virga/providers/aws/definitions/subnets.yaml>`_ and
