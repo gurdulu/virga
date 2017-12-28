@@ -2,6 +2,7 @@
 .. _PyYAML: http://pyyaml.org/wiki/PyYAML
 .. _JMESPath: https://github.com/jmespath/jmespath.py
 .. _boto3: https://github.com/boto/boto3
+.. _AWS: https://aws.amazon.com/
 
 =====
 Virga
@@ -34,13 +35,13 @@ This project is still in pre-alpha
 There are many things still missing:
 
 * the documentation needs to be completed
-* the definition file is just a draft for testing purposes
+* the definition files are just a draft for testing purposes
 
 ------------------
 Provider supported
 ------------------
 
-At the moment only `AWS <https://aws.amazon.com/>`_.
+At the moment only AWS_.
 
 ------------
 Requirements
@@ -62,10 +63,10 @@ Quick start
 
 1. Install Virga :code:`pip install virga`
 2. Create the file ``tests.yaml``
-3. :code:`virga-asserts aws tests.yaml`
+3. :code:`virga-asserts -p aws -t tests.yaml`
 
 
-``tests.yaml`` is the `Tests file`_.
+``tests.yaml`` is a `Test files`_.
 
 -------
 Options
@@ -75,15 +76,15 @@ Following the list of options of virga-asserts
 
 .. code:: bash
 
-    usage: virga-asserts [-h] [-d DEFINITIONS] [-l LOGFILE] [-s] [-o OUTPUT] [--debug] {aws} testfile
-
-    positional arguments:
-      {aws}                 provider
-      testfile              test file
+    usage: virga-asserts [-h] -p {aws} [-t TESTFILE [TESTFILE ...]] [-d DEFINITIONS] [-l LOGFILE] [-s] [-o OUTPUT] [--debug]
 
     optional arguments:
       -h, --help            show this help message and exit
-      -d DEFINITIONS, --definition DEFINITIONS
+      -p {aws}, --provider {aws}
+                            provider
+      -t TESTFILE [TESTFILE ...], --testfile TESTFILE [TESTFILE ...]
+                            test file
+      -d DEFINITIONS, --definitions DEFINITIONS
                             custom definitions path
       -l LOGFILE, --logfile LOGFILE
                             redirect the output to a log file
@@ -91,6 +92,8 @@ Following the list of options of virga-asserts
       -o OUTPUT, --output OUTPUT
                             save the resource info into the specified directory
       --debug               show debug
+
+The command requires a valid provider and at least one test file (see `Test files`_).
 
 -------------------
 Configuration files
@@ -157,7 +160,7 @@ case boto3_).
 
 The default definitions path can be overridden with the option ``--definitions``.
 
-Tests file
+Test files
 ==========
 
 An example is worth 1000 words.
@@ -228,10 +231,22 @@ FAQ
 
 See `This project is still in pre-alpha`_
 
-Recommendation on permissions
-=============================
+AWS credentials settings
+========================
 
-See `This project is still in pre-alpha`_
+Even if AWS_ requires appropriate credentials, Virga does not explicitly requires any setting.
+
+There are several ways to set AWS_ credentials, if you have some doubts about it, we suggest you to spend some time
+studying this topic before using AWS_.
+
+A quick way is using `AWS CLI <http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html>`_
+
+.. code:: bash
+
+    pip install awscli --upgrade --user
+    aws configure
+
+For more information refer to `boto3 documentation <http://boto3.readthedocs.io/en/latest/guide/configuration.html>`_.
 
 Why my test is failing
 ======================

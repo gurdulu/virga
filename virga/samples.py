@@ -12,10 +12,10 @@ def parser() -> any:
     :return: Arguments
     """
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('provider', help='Provider')
-    arg_parser.add_argument('section', help='Section')
-    arg_parser.add_argument('resource', help='Resource ID')
-    arg_parser.add_argument('-d', '--definitions', help='Definitions path')
+    arg_parser.add_argument('-p', '--provider', required=True, help='provider')
+    arg_parser.add_argument('-s', '--section', required=True, help='section')
+    arg_parser.add_argument('-r', '--resource', required=True, help='resource id')
+    arg_parser.add_argument('-d', '--definitions', help='definitions path')
     return arg_parser.parse_args()
 
 

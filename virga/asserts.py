@@ -12,8 +12,8 @@ def parser() -> any:
     :return: Arguments
     """
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('provider', choices=['aws', ], help='provider')
-    arg_parser.add_argument('testfile', help='test file')
+    arg_parser.add_argument('-p', '--provider', choices=['aws', ], required=True, help='provider')
+    arg_parser.add_argument('-t', '--testfile', nargs='+', required=True, help='test file')
     arg_parser.add_argument('-d', '--definitions', help='custom definitions path')
     arg_parser.add_argument('-l', '--logfile', help='redirect the output to a log file')
     arg_parser.add_argument('-s', '--silent', help='do not output results', action='store_true', default=False)
@@ -22,16 +22,19 @@ def parser() -> any:
     return arg_parser.parse_args()
 
 
-def read_testfile(testfile_path: str) -> dict:
+def read_testfile(testfile_paths: list) -> dict:
     """
     Read, parse and return the test configuration file.
 
-    :param testfile_path: Test configuration filename
+    :param testfile_paths: Test configuration filename
     :return: Test structure
     """
     try:
-        with open(testfile_path) as testfile:
-            return yaml.load(testfile)
+        tests = {}
+        for testfile_path in testfile_paths:
+            with open(testfile_path) as testfile:
+                tests.update(yaml.load(testfile))
+        return tests
     except FileNotFoundError:
         raise VirgaException('Test file not found')
     except ParserError:

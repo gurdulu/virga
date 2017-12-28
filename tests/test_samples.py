@@ -12,10 +12,10 @@ class TestVirgaSamples(TestCase):
     @patch('argparse.ArgumentParser.add_argument')
     def test_parser_function(self, mock_add_argument, mock_parse_args):
         parser()
-        mock_add_argument.assert_any_call('provider', help='Provider')
-        mock_add_argument.assert_any_call('section', help='Section')
-        mock_add_argument.assert_any_call('resource', help='Resource ID')
-        mock_add_argument.assert_any_call('-d', '--definitions', help='Definitions path')
+        mock_add_argument.assert_any_call('-p', '--provider', required=True, help='provider')
+        mock_add_argument.assert_any_call('-s', '--section', required=True, help='section')
+        mock_add_argument.assert_any_call('-r', '--resource', required=True, help='resource id')
+        mock_add_argument.assert_any_call('-d', '--definitions', help='definitions path')
         mock_parse_args.assert_called_once()
 
     @patch('virga.samples.parser')
