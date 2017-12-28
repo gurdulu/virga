@@ -1,4 +1,5 @@
 import boto3
+from botocore.exceptions import ClientError
 
 from virga.common import VirgaException
 
@@ -22,7 +23,7 @@ class VirgaClient(object):
                 if cert['DomainName'] == resource_object['domain_name']
             ]
             return client.describe_certificate(CertificateArn=res_certificates[0]['CertificateArn'])
-        except (KeyError, IndexError):
+        except (KeyError, IndexError, ClientError):
             raise VirgaException(
                 'Lookup certificates domain_name %s failed' % resource_object['domain_name'])
 
@@ -63,7 +64,7 @@ class VirgaClient(object):
             resource['LoadBalancers'][0]['TargetGroups'] = result_target_group
 
             return resource
-        except (KeyError, IndexError):
+        except (KeyError, IndexError, ClientError):
             raise VirgaException(
                 'Lookup %s %s %s failed' % ('elbv2', 'name', resource_object['name']))
 
