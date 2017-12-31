@@ -1,0 +1,11 @@
+---
+stacks:
+  client: cloudformation
+  action: describe_stacks
+  context: Cloud Formation Stacks
+  prefix: Stacks
+  resource_id: StackId
+  identifiers:
+    name:
+      key: StackName
+      type: string
