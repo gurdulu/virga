@@ -1,4 +1,3 @@
-from copy import deepcopy
 from multiprocessing import Manager, Process
 import os
 import boto3
