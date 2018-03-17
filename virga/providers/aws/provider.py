@@ -1,3 +1,4 @@
+from copy import deepcopy
 from multiprocessing import Manager, Process
 import os
 import boto3
@@ -61,6 +62,16 @@ class Provider(AbstractProvider):
         """
         response = self.client(resource_definition, resource_object)
         items = self.flatten_items(response, resource_definition['prefix'])
+
+        # None items are resources not found
+        if not items:
+            items = [None]
+        if any(x is None for x in items):
+            identifier = {k: v for k, v in resource_object.items() if k != 'assertions'}
+            items = [{resource_definition['resource_id']: '%s = %s (RESOURCE NOT FOUND)' % (
+                next(iter(identifier.keys())),
+                next(iter(identifier.values())))}]
+
         for resource in items:
             resource_id = resource[resource_definition['resource_id']]
             for test in resource_object['assertions']:
@@ -109,7 +120,7 @@ class Provider(AbstractProvider):
                 result = {identifier['key']: [test[filter_key]]}
             return result
         except (KeyError, IndexError):
-            raise VirgaException('Invalid configuration')
+            raise VirgaException('Invalid definition')
 
     def flatten_items(self, response: dict, prefix: str) -> list:
         """

@@ -8,7 +8,7 @@ class VirgaClient(object):
     """VirgaClient substitute the standard AWS client for more complex requests."""
 
     @staticmethod
-    def find_certificate(resource_object: dict) -> dict:
+    def find_certificate(resource_object: dict) -> any:
         """
         Call boto3/acm for finding the certificate for the passed domain.
 
@@ -23,12 +23,13 @@ class VirgaClient(object):
                 if cert['DomainName'] == resource_object['domain_name']
             ]
             return client.describe_certificate(CertificateArn=res_certificates[0]['CertificateArn'])
-        except (KeyError, IndexError, ClientError):
-            raise VirgaException(
-                'Lookup certificates domain_name %s failed' % resource_object['domain_name'])
+        except ClientError:
+            raise VirgaException('Lookup certificates domain_name %s failed' % resource_object['domain_name'])
+        except (KeyError, IndexError):
+            return None
 
     @staticmethod
-    def find_elbv2(resource_object: dict) -> dict:
+    def find_elbv2(resource_object: dict) -> any:
         """
         Call boto3/elbv2 for finding the ELBv2 instance by name.
 
@@ -43,15 +44,18 @@ class VirgaClient(object):
         """
         client = boto3.client('elbv2')
         try:
-            resource = client.describe_load_balancers(Names=[resource_object['name']])
+            resources = client.describe_load_balancers()
+            resource = [
+                x for x in resources['LoadBalancers'] if x['LoadBalancerName'] == resource_object['name']
+            ][0]
 
-            arn = resource['LoadBalancers'][0]['LoadBalancerArn']
+            arn = resource['LoadBalancerArn']
             attributes = client.describe_load_balancer_attributes(LoadBalancerArn=arn)
 
-            resource['LoadBalancers'][0]['Attributes'] = attributes['Attributes']
+            resource['Attributes'] = attributes['Attributes']
             listeners = client.describe_listeners(LoadBalancerArn=arn)
 
-            resource['LoadBalancers'][0]['Listeners'] = listeners['Listeners']
+            resource['Listeners'] = listeners['Listeners']
             target_groups = client.describe_target_groups(LoadBalancerArn=arn)
 
             result_target_group = []
@@ -61,17 +65,18 @@ class VirgaClient(object):
                 target_group['Attributes'] = attributes
                 result_target_group.append(target_group)
 
-            resource['LoadBalancers'][0]['TargetGroups'] = result_target_group
+            resource['TargetGroups'] = result_target_group
 
-            return resource
-        except (KeyError, IndexError, ClientError):
-            raise VirgaException(
-                'Lookup %s %s %s failed' % ('elbv2', 'name', resource_object['name']))
+            return {'LoadBalancers': [resource]}
+        except ClientError:
+            raise VirgaException('Lookup %s %s %s failed' % ('elbv2', 'name', resource_object['name']))
+        except (KeyError, IndexError):
+            return None
 
     @staticmethod
     def find_cloudtrail(resource_object: dict) -> dict:
         """
-        Call boto3/acm for finding the CloudTrail trail by name.
+        Call boto3/cloudtrail for finding the CloudTrail trail by name.
 
         :param resource_object: Object filter
         :return: Response from AWS

@@ -61,7 +61,7 @@ class TestAWS(TestCase):
             }
         }
         test = {'another-key': 'resource-name'}
-        with self.assertRaisesRegex(VirgaException, 'Invalid configuration'):
+        with self.assertRaisesRegex(VirgaException, 'Invalid definition'):
             self.provider.format_filter(definition, test)
 
     def test_evaluate_no_assertions_calls_aws(self, mock_call):
@@ -94,6 +94,32 @@ class TestAWS(TestCase):
         }
         self.provider.evaluate(test, definition, [])
         mock_format_filter.assert_called_with(definition, {'name': 'my-subnet', 'assertions': []})
+
+    @patch('virga.providers.abstract.AbstractProvider.assertion')
+    @patch('virga.providers.aws.provider.Provider.client')
+    def test_evaluate_with_empty_items_call_assertion_with_error(self, mock_client, mock_assertion, *args):
+        mock_client.return_value = None
+        test = {
+            'name': 'my-subnet',
+            'assertions': ['test123']
+        }
+        definition = {
+            'client': 'ec2',
+            'action': 'describe_subnets',
+            'context': 'Subnets',
+            'prefix': 'Subnets',
+            'resource_id': 'SubnetId',
+            'identifiers': {
+                'id': {'key': 'subnet-id', 'type': 'filter'},
+                'name': {'key': 'tag:Name', 'type': 'filter'}
+            }
+        }
+        self.provider.evaluate(test, definition, [])
+        mock_assertion.assert_called_once_with(
+            'test123',
+            'Subnets', {'SubnetId': 'name = my-subnet (RESOURCE NOT FOUND)'},
+            'name = my-subnet (RESOURCE NOT FOUND)'
+        )
 
     @patch('virga.providers.abstract.AbstractProvider.assertion')
     def test_evaluate_no_assertions_calls_assertion(self, mock_assertion, mock_call):
@@ -231,10 +257,8 @@ class TestAWS(TestCase):
 
     def test_find_certificate_no_certificates_found(self, mock_call):
         mock_call.side_effect = [{}, {}]
-        with self.assertRaisesRegex(VirgaException, 'Lookup certificates domain_name any-domain.it failed'):
-            VirgaClient.find_certificate({'domain_name': 'any-domain.it'})
+        self.assertIsNone(VirgaClient.find_certificate({'domain_name': 'any-domain.it'}))
 
     def test_find_certificate_no_domain_found(self, mock_call):
         mock_call.side_effect = [{'CertificateSummaryList': [{'DomainName': 'any-domain.it'}]}, IndexError()]
-        with self.assertRaisesRegex(VirgaException, 'Lookup certificates domain_name any-domain.it failed'):
-            VirgaClient.find_certificate({'domain_name': 'any-domain.it'})
+        self.assertIsNone(VirgaClient.find_certificate({'domain_name': 'any-domain.it'}))
