@@ -1,10 +1,10 @@
 ---
-auto_scaling:
-  client: autoscaling
-  action: describe_auto_scaling_groups
+autoscaling_groups:
+  client: virga
+  action: find_auto_scaling_groups
   context: Auto Scaling Group
   prefix: AutoScalingGroups
-  resource_id: AutoScalingGroupARN
+  resource_id: AutoScalingGroupName
   identifiers:
     name:
       key: AutoScalingGroupNames

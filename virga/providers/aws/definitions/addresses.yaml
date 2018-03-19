@@ -1,0 +1,13 @@
+addresses:
+  client: ec2
+  action: describe_addresses
+  context: EIP
+  prefix: Addresses
+  resource_id: PublicIp
+  identifiers:
+    ip:
+      key: public-ip
+      type: filter
+    name:
+      key: tag:Name
+      type: filter

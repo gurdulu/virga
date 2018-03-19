@@ -1,4 +1,5 @@
 import boto3
+import re
 from botocore.exceptions import ClientError
 
 from virga.common import VirgaException
@@ -84,3 +85,19 @@ class VirgaClient(object):
         client = boto3.client('cloudtrail')
         response = client.describe_trails()
         return {'trailList': list(filter(lambda d: d['Name'] == resource_object['name'], response['trailList']))}
+
+    @staticmethod
+    def find_auto_scaling_groups(resource_object: dict) -> dict:
+        """
+        Call boto3/autoscaling for finding the AutoScaling group by name.
+
+        :param resource_object: Object filter
+        :return: Response from AWS
+        """
+        client = boto3.client('autoscaling')
+        response = client.describe_auto_scaling_groups()
+        group_names = [x['AutoScalingGroupName'] for x in response['AutoScalingGroups']]
+        regex = re.compile(resource_object['name'].replace('*', '.*'))
+        group_names = filter(regex.search, group_names)
+        groups = [x for x in response['AutoScalingGroups'] if x['AutoScalingGroupName'] in group_names]
+        return {'AutoScalingGroups': groups}

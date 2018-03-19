@@ -1,0 +1,10 @@
+vpc_peerings:
+  client: ec2
+  action: describe_vpc_peering_connections
+  context: VPC Peering Connections
+  prefix: VpcPeeringConnections
+  resource_id: VpcPeeringConnectionId
+  identifiers:
+    name:
+      key: tag:Name
+      type: filter
