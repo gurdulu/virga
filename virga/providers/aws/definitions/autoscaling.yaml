@@ -8,4 +8,4 @@ autoscaling_groups:
   identifiers:
     name:
       key: AutoScalingGroupNames
-      type: list
+      type: string
