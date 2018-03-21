@@ -1,10 +1,19 @@
 import io
+from subprocess import Popen, PIPE
 
 from setuptools import setup
 
+
+def get_version():
+    p = Popen(['git', 'describe', '--abbrev'], stdout=PIPE, stderr=PIPE)
+    p.stderr.close()
+    line = p.stdout.readlines()[0]
+    return line.strip()
+
+
 setup(
     name='virga',
-    version='0.0.13',
+    version=get_version(),
     description='Analysing your Cloud infrastructure before the rain falls to the ground',
     long_description=io.open('README.rst', encoding='utf-8').read(),
     classifiers=[
