@@ -9,3 +9,5 @@ __pycache__
 dist
 *.egg-info
 *.egg
+cc-test-reporter
+coverage.xml
