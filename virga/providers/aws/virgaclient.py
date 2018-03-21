@@ -1,5 +1,5 @@
-import boto3
 import re
+import boto3
 from botocore.exceptions import ClientError
 
 from virga.common import VirgaException
@@ -87,7 +87,7 @@ class VirgaClient(object):
         return {'trailList': list(filter(lambda d: d['Name'] == resource_object['name'], response['trailList']))}
 
     @staticmethod
-    def find_auto_scaling_groups(resource_object: dict) -> dict:
+    def find_autoscaling_groups(resource_object: dict) -> dict:
         """
         Call boto3/autoscaling for finding the AutoScaling group by name.
 

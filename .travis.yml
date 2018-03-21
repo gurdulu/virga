@@ -16,3 +16,10 @@ script:
   - pytest --cov=virga tests --cov-report xml:coverage.xml
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT -t coverage.py
+deploy:
+  provider: pypi
+  user: gurdulu
+  password:
+    secure: "Your encrypted password"
+  on:
+    tags: true

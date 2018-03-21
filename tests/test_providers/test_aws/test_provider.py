@@ -167,11 +167,11 @@ class TestAWS(TestCase):
         ]
         mock_assertion.assert_has_calls(expected, any_order=True)
 
-    @patch('virga.providers.aws.Provider.process')
-    def test_launch_tests(self, mock_process, *args):
+    @patch('multiprocessing.pool.Pool.apply_async')
+    def test_launch_tests(self, mock_apply, *args):
         self.provider.tests = fixture('tests.yaml', get_yaml=True)
         self.provider.action()
-        self.assertEqual(3, mock_process.call_count)
+        self.assertEqual(3, mock_apply.call_count)
 
     @patch('virga.providers.aws.Provider.read_definitions')
     def test_sample_invokes_read_definition(self, mock_read_definition, *args):
