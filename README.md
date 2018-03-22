@@ -1,9 +1,3 @@
-.. _Python: http://www.python.org/
-.. _PyYAML: http://pyyaml.org/wiki/PyYAML
-.. _JMESPath: https://github.com/jmespath/jmespath.py
-.. _boto3: https://github.com/boto/boto3
-.. _AWS: https://aws.amazon.com/
-
 # Virga
 
 Virga tests your Cloud resources.
