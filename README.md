@@ -26,7 +26,7 @@ There are many things still missing:
 * the definition files are just a draft for testing purposes
 
 
-## Provider supported
+## Providers supported
 
 At the moment only [AWS](https://aws.amazon.com/).
 
