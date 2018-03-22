@@ -1,0 +1,10 @@
+vpcs:
+  client: ec2
+  action: describe_vpcs
+  context: VPC
+  prefix: Vpcs
+  resource_id: VpcId
+  identifiers:
+    name:
+      key: tag:Name
+      type: filter

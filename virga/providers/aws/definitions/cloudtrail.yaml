@@ -2,7 +2,7 @@
 cloudtrails:
   client: virga
   action: find_cloudtrail
-  context: Clodtrails
+  context: CloudTrails
   prefix: trailList
   resource_id: Name
   identifiers:

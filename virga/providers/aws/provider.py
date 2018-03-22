@@ -1,5 +1,7 @@
-from multiprocessing import Manager, Process
+from multiprocessing import Manager
+from multiprocessing.pool import Pool
 import os
+
 import boto3
 
 import jmespath
@@ -16,22 +18,6 @@ class Provider(AbstractProvider):
     def __init__(self, args: any):  # NOQA
         super(Provider, self).__init__(args)
         self.definitions_path = os.path.join(os.path.dirname(__file__), 'definitions')
-
-    def process(self, resource_section: str, resource_object: dict, shared_messages: list) -> Process:
-        """
-        Start and return the process.
-
-        This method is made for facilitating the tests.
-
-        :param resource_section: Section of the resource to evaluate
-        :param resource_object: Object to evaluate
-        :param shared_messages: Shared messages managed list
-        :return: The process instantiated
-        """
-        resource_definition = self.definitions[resource_section]
-        process = Process(target=self.evaluate, args=(resource_object, resource_definition, shared_messages))
-        process.start()
-        return process
 
     def client(self, resource_definition: dict, resource_object: dict) -> dict:
         """
@@ -85,17 +71,17 @@ class Provider(AbstractProvider):
         Requests are sent using the `request` method which starts a separated process.
         When the processes are all concluded, the outcome is logged.
         """
-        jobs = []
-
         with Manager() as manager:
             shared_messages = manager.list()
-            for resource_section, resource_objects in self.tests.items():
-                for resource_object in resource_objects:
-                    process = self.process(resource_section, resource_object, shared_messages)
-                    jobs.append(process)
+            pool = Pool()
 
-            for job in jobs:
-                job.join()
+            for resource_section, resource_objects in self.tests.items():
+                definition = self.definitions[resource_section]
+                for resource_object in resource_objects:
+                    pool.apply_async(self.evaluate, (resource_object, definition, shared_messages))
+
+            pool.close()
+            pool.join()
 
             self.logs(shared_messages)
             self.result(shared_messages)
