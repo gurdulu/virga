@@ -8,7 +8,7 @@ def get_version():
     p = Popen(['git', 'describe', '--abbrev'], stdout=PIPE, stderr=PIPE)
     p.stderr.close()
     line = p.stdout.readlines()[0]
-    return line.strip()
+    return line.strip().decode('utf-8')
 
 
 setup(
