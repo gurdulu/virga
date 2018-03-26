@@ -13,7 +13,7 @@ def parser() -> any:
     """
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('-p', '--provider', required=True, help='provider')
-    arg_parser.add_argument('-s', '--section', required=True, help='section')
+    arg_parser.add_argument('-s', '--section', required=True, help='type of resource to exemplify')
     arg_parser.add_argument('-r', '--resource', required=True, help='resource id')
     arg_parser.add_argument('-d', '--definitions', help='definitions path')
     return arg_parser.parse_args()
