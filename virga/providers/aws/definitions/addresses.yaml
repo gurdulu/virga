@@ -1,3 +1,4 @@
+---
 addresses:
   client: ec2
   action: describe_addresses

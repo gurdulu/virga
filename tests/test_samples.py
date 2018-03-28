@@ -13,7 +13,7 @@ class TestVirgaSamples(TestCase):
     def test_parser_function(self, mock_add_argument, mock_parse_args):
         parser()
         mock_add_argument.assert_any_call('-p', '--provider', required=True, help='provider')
-        mock_add_argument.assert_any_call('-s', '--section', required=True, help='section')
+        mock_add_argument.assert_any_call('-s', '--section', required=True, help='type of resource to exemplify')
         mock_add_argument.assert_any_call('-r', '--resource', required=True, help='resource id')
         mock_add_argument.assert_any_call('-d', '--definitions', help='definitions path')
         mock_parse_args.assert_called_once()
