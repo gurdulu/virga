@@ -15,8 +15,7 @@ setup(
     name='virga',
     version=get_version(),
     description='Analysing your Cloud infrastructure before the rain falls to the ground',
-    long_description=io.open('README.md', encoding='utf-8').read(),
-    long_description_content_type='text/markdown',
+    long_description=io.open('README.rst', encoding='utf-8').read(),
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'License :: OSI Approved :: MIT License',
