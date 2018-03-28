@@ -39,7 +39,7 @@ result = getattr(obj, action)(Filters=[{identifier: resource_id}])
 The __result__ would contain a Python structure like
 
 ```python
-{
+result = {
     'ResponseMetadata': {
         'HTTPHeaders': {
             'content-type': 'text/xml;charset=UTF-8',
