@@ -1,0 +1,11 @@
+---
+elb:
+  client: virga
+  action: find_elb
+  context: ELB
+  prefix: LoadBalancerDescriptions
+  resource_id: LoadBalancerName
+  identifiers:
+    name:
+      key: name
+      type: string

@@ -60,7 +60,7 @@ elbv2_describe_load_balancers = {
             ],
             'CanonicalHostedZoneId': 'ZHURV9DERC5T8',
             'CreatedTime': datetime.datetime(2017, 1, 12, 8, 25, 11, 840000, tzinfo=tzutc()),
-            'DNSName': 'internal-my-elbv2-018826633.eu-west-2.elb.amazonaws.com',
+            'DNSName': 'internal-my-elbv2-0123456.eu-west-2.elb.amazonaws.com',
             'IpAddressType': 'ipv4',
             'LoadBalancerArn': 'arn:aws:elasticloadbalancing:eu-west-2:01234567890:loadbalancer/app/my-elbv2/9987acf27',
             'LoadBalancerName': 'my-elbv2',
@@ -137,6 +137,18 @@ elbv2_describe_target_group_attributes = {
 }
 
 
+elbv2_describe_tags = {
+    'TagDescriptions': [
+        {
+            'Tags': [
+                {'Key': 'Environment', 'Value': 'dev'},
+                {'Key': 'Name', 'Value': 'my-elbv2'},
+            ]
+        }
+    ]
+}
+
+
 elbv2_result = {
     'LoadBalancers': [
         {
@@ -153,7 +165,7 @@ elbv2_result = {
             ],
             'CanonicalHostedZoneId': 'ZHURV9DERC5T8',
             'CreatedTime': datetime.datetime(2017, 1, 12, 8, 25, 11, 840000, tzinfo=tzutc()),
-            'DNSName': 'internal-my-elbv2-018826633.eu-west-2.elb.amazonaws.com',
+            'DNSName': 'internal-my-elbv2-0123456.eu-west-2.elb.amazonaws.com',
             'IpAddressType': 'ipv4',
             'Listeners': [
                 {
@@ -202,7 +214,129 @@ elbv2_result = {
                 }
             ],
             'Type': 'application',
-            'VpcId': 'vpc-9839873'
+            'VpcId': 'vpc-9839873',
+            'Tags': [
+                {'Key': 'Environment', 'Value': 'dev'},
+                {'Key': 'Name', 'Value': 'my-elbv2'},
+            ]
+        },
+    ]
+}
+
+
+elb_describe_load_balancers = {
+    'LoadBalancerDescriptions': [
+        {
+            'Subnets': ['subnet-0123456', 'subnet-0123457'],
+            'CanonicalHostedZoneNameID': 'ZABCDEFG',
+            'VPCId': 'vpc-0123456',
+            'ListenerDescriptions': [
+                {
+                    'Listener': {
+                        'InstancePort': 443,
+                        'LoadBalancerPort': 443,
+                        'Protocol': 'TCP',
+                        'InstanceProtocol': 'TCP'
+                    },
+                    'PolicyNames': []
+                }
+            ],
+            'HealthCheck': {
+                'HealthyThreshold': 2,
+                'Interval': 30,
+                'Target': 'HTTPS:443',
+                'Timeout': 5,
+                'UnhealthyThreshold': 2
+            },
+            'BackendServerDescriptions': [],
+            'Instances': [
+                {'InstanceId': 'i-0123456'}
+            ],
+            'DNSName': 'internal-my-elb-0123456.eu-west-2.elb.amazonaws.com',
+            'SecurityGroups': ['sg-0123456'],
+            'Policies': {
+                'LBCookieStickinessPolicies': [],
+                'AppCookieStickinessPolicies': [],
+                'OtherPolicies': []
+            },
+            'LoadBalancerName': 'my-elb',
+            'CreatedTime': '2018-04-24T21:44:24.670Z',
+            'AvailabilityZones': [
+                'eu-west-2a',
+                'eu-west-2b'
+            ],
+            'Scheme': 'internal',
+            'SourceSecurityGroup': {
+                'OwnerAlias': '01234567890',
+                'GroupName': 'my.example.com'
+            },
+        }
+    ]
+}
+
+
+elb_describe_tags = {
+    'TagDescriptions': [
+        {
+            'Tags': [
+                {'Key': 'Environment', 'Value': 'dev'},
+                {'Key': 'Name', 'Value': 'my-elb'},
+            ]
+        }
+    ]
+}
+
+
+elb_result = {
+    'LoadBalancerDescriptions': [
+        {
+            'Subnets': ['subnet-0123456', 'subnet-0123457'],
+            'CanonicalHostedZoneNameID': 'ZABCDEFG',
+            'VPCId': 'vpc-0123456',
+            'ListenerDescriptions': [
+                {
+                    'Listener': {
+                        'InstancePort': 443,
+                        'LoadBalancerPort': 443,
+                        'Protocol': 'TCP',
+                        'InstanceProtocol': 'TCP'
+                    },
+                    'PolicyNames': []
+                }
+            ],
+            'HealthCheck': {
+                'HealthyThreshold': 2,
+                'Interval': 30,
+                'Target': 'HTTPS:443',
+                'Timeout': 5,
+                'UnhealthyThreshold': 2
+            },
+            'BackendServerDescriptions': [],
+            'Instances': [
+                {'InstanceId': 'i-0123456'}
+            ],
+            'DNSName': 'internal-my-elb-0123456.eu-west-2.elb.amazonaws.com',
+            'SecurityGroups': ['sg-0123456'],
+            'Policies': {
+                'LBCookieStickinessPolicies': [],
+                'AppCookieStickinessPolicies': [],
+                'OtherPolicies': []
+            },
+            'LoadBalancerName': 'my-elb',
+            'CreatedTime': '2018-04-24T21:44:24.670Z',
+            'AvailabilityZones': [
+                'eu-west-2a',
+                'eu-west-2b'
+            ],
+            'Scheme': 'internal',
+            'SourceSecurityGroup': {
+                'OwnerAlias': '01234567890',
+                'GroupName': 'my.example.com'
+            },
+            'Tags': [
+                {'Key': 'Environment', 'Value': 'dev'},
+                {'Key': 'Name', 'Value': 'my-elb'},
+            ]
         }
     ]
 }
