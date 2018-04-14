@@ -5,7 +5,7 @@ from setuptools import setup
 
 
 def get_version():
-    p = Popen(['git', 'describe', '--abbrev'], stdout=PIPE, stderr=PIPE)
+    p = Popen(['git', 'describe', '--tags'], stdout=PIPE, stderr=PIPE)
     p.stderr.close()
     line = p.stdout.readlines()[0]
     return line.strip().decode('utf-8')
