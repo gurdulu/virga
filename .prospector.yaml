@@ -4,6 +4,9 @@ strictness: high
 test-warnings: false
 doc-warnings: true
 
+ignore-paths:
+  - dist
+
 pep257:
   disable:
     - D100

@@ -62,8 +62,8 @@ class VirgaClient(object):
             regex = re.compile(resource_object['name'].replace('*', '.*'))
             lbs_names = filter(regex.search, lbs_names)
             filtered_lbs = [x for x in described_lbs['LoadBalancerDescriptions'] if x['LoadBalancerName'] in lbs_names]
-            for lb in filtered_lbs:
-                resources.append(describe_elb(lb))
+            for load_balancer in filtered_lbs:
+                resources.append(describe_elb(load_balancer))
             return {'LoadBalancerDescriptions': resources}
         except ClientError:
             raise VirgaException('Lookup %s %s %s failed' % ('elb', 'name', resource_object['name']))
@@ -122,8 +122,8 @@ class VirgaClient(object):
             regex = re.compile(resource_object['name'].replace('*', '.*'))
             lbs_names = filter(regex.search, lbs_names)
             filtered_lbs = [x for x in described_lbs['LoadBalancers'] if x['LoadBalancerName'] in lbs_names]
-            for lb in filtered_lbs:
-                resources.append(describe_elbv2(lb))
+            for load_balancer in filtered_lbs:
+                resources.append(describe_elbv2(load_balancer))
             return {'LoadBalancers': resources}
         except ClientError:
             raise VirgaException('Lookup %s %s %s failed' % ('elbv2', 'name', resource_object['name']))
