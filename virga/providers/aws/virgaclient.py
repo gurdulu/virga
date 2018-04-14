@@ -30,34 +30,77 @@ class VirgaClient(object):
             return None
 
     @staticmethod
+    def find_elb(resource_object: dict) -> any:
+        """
+        Call boto3/elb for finding the ELB instances by name.
+
+        The result contains:
+        - load balancer attributes
+        - load balancer tags
+
+        :param resource_object: Object filter
+        :return: List of ELB resources
+        """
+        client = boto3.client('elb')
+
+        def describe_elb(resource: dict) -> dict:
+            """
+            Add to the ELB resource additional information.
+
+            :param resource: Resource
+            :return: ELB resource enriched
+            """
+            tags = client.describe_tags(LoadBalancerNames=[resource['LoadBalancerName']])
+            resource['Tags'] = tags['TagDescriptions'][0]['Tags']
+
+            return resource
+
+        try:
+            resources = []
+            described_lbs = client.describe_load_balancers()
+            lbs_names = [x['LoadBalancerName'] for x in described_lbs['LoadBalancerDescriptions']]
+            regex = re.compile(resource_object['name'].replace('*', '.*'))
+            lbs_names = filter(regex.search, lbs_names)
+            filtered_lbs = [x for x in described_lbs['LoadBalancerDescriptions'] if x['LoadBalancerName'] in lbs_names]
+            for lb in filtered_lbs:
+                resources.append(describe_elb(lb))
+            return {'LoadBalancerDescriptions': resources}
+        except ClientError:
+            raise VirgaException('Lookup %s %s %s failed' % ('elb', 'name', resource_object['name']))
+        except (KeyError, IndexError):
+            return None
+
+    @staticmethod
     def find_elbv2(resource_object: dict) -> any:
         """
-        Call boto3/elbv2 for finding the ELBv2 instance by name.
+        Call boto3/elbv2 for finding the ELBv2 instances by name.
 
         The result contains:
         - load balancer attributes
         - listeners
         - target groups
         - target group attributes
+        - load balancer tags
 
         :param resource_object: Object filter
-        :return: Response from AWS
+        :return: List of ELBv2 resources
         """
         client = boto3.client('elbv2')
-        try:
-            resources = client.describe_load_balancers()
-            resource = [
-                x for x in resources['LoadBalancers'] if x['LoadBalancerName'] == resource_object['name']
-            ][0]
 
-            arn = resource['LoadBalancerArn']
-            attributes = client.describe_load_balancer_attributes(LoadBalancerArn=arn)
+        def describe_elbv2(resource: dict) -> dict:
+            """
+            Add to the ELBv2 resource additional information.
 
+            :param resource: Resource
+            :return: ELBv2 resource enriched
+            """
+            attributes = client.describe_load_balancer_attributes(LoadBalancerArn=resource['LoadBalancerArn'])
             resource['Attributes'] = attributes['Attributes']
-            listeners = client.describe_listeners(LoadBalancerArn=arn)
 
+            listeners = client.describe_listeners(LoadBalancerArn=resource['LoadBalancerArn'])
             resource['Listeners'] = listeners['Listeners']
-            target_groups = client.describe_target_groups(LoadBalancerArn=arn)
+
+            target_groups = client.describe_target_groups(LoadBalancerArn=resource['LoadBalancerArn'])
 
             result_target_group = []
             for target_group in target_groups['TargetGroups']:
@@ -65,10 +108,23 @@ class VirgaClient(object):
                     TargetGroupArn=target_group['TargetGroupArn'])['Attributes']
                 target_group['Attributes'] = attributes
                 result_target_group.append(target_group)
-
             resource['TargetGroups'] = result_target_group
 
-            return {'LoadBalancers': [resource]}
+            tags = client.describe_tags(ResourceArns=[resource['LoadBalancerArn']])
+            resource['Tags'] = tags['TagDescriptions'][0]['Tags']
+
+            return resource
+
+        try:
+            resources = []
+            described_lbs = client.describe_load_balancers()
+            lbs_names = [x['LoadBalancerName'] for x in described_lbs['LoadBalancers']]
+            regex = re.compile(resource_object['name'].replace('*', '.*'))
+            lbs_names = filter(regex.search, lbs_names)
+            filtered_lbs = [x for x in described_lbs['LoadBalancers'] if x['LoadBalancerName'] in lbs_names]
+            for lb in filtered_lbs:
+                resources.append(describe_elbv2(lb))
+            return {'LoadBalancers': resources}
         except ClientError:
             raise VirgaException('Lookup %s %s %s failed' % ('elbv2', 'name', resource_object['name']))
         except (KeyError, IndexError):
