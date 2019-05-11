@@ -11,3 +11,4 @@ dist
 *.egg
 cc-test-reporter
 coverage.xml
+venv
