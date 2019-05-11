@@ -10,7 +10,7 @@ fixtures_dir = os.path.join(os.path.dirname(__file__), 'fixtures')
 def fixture(filename, get_yaml=False, get_json=False):
     with open(os.path.join(fixtures_dir, filename)) as f:
         if get_yaml:
-            return yaml.load(f)
+            return yaml.full_load(f)
         elif get_json:
             return json.load(f)
         else:
