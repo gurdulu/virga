@@ -33,7 +33,7 @@ def read_testfile(testfile_paths: list) -> dict:
         tests = {}
         for testfile_path in testfile_paths:
             with open(testfile_path) as testfile:
-                tests.update(yaml.load(testfile))
+                tests.update(yaml.full_load(testfile))
         return tests
     except FileNotFoundError:
         raise VirgaException('Test file not found')

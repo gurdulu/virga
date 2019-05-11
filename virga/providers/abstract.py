@@ -81,7 +81,7 @@ class AbstractProvider(object):
         definitions = {}
         for item in [x for x in os.listdir(definitions_path) if x.endswith('.yaml')]:
             with open(os.path.join(definitions_path, item)) as definition:
-                definitions.update(yaml.load(definition))
+                definitions.update(yaml.full_load(definition))
         return definitions
 
     @property
