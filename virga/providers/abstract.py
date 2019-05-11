@@ -16,7 +16,7 @@ ERROR = 40
 SUCCESS = 20
 
 
-class AbstractProvider(object):
+class AbstractProvider:
     """
     Abstract Provider class.
 

@@ -5,7 +5,7 @@ from botocore.exceptions import ClientError
 from virga.common import VirgaException
 
 
-class VirgaClient(object):
+class VirgaClient:
     """VirgaClient substitute the standard AWS client for more complex requests."""
 
     @staticmethod
