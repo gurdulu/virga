@@ -1,26 +1,34 @@
 dist: xenial
 language: python
+
 python:
-- '3.6'
-- '3.7'
+  - '3.6'
+  - '3.7'
+
 install:
-- pip install -r requirements-dev.txt
+  - pip install -r requirements-dev.txt
+
 env:
   global:
-  - AWS_DEFAULT_REGION=eu-west-2
-  - CC_TEST_REPORTER_ID=b858d79e55401a444fc6a05cc1c42ba4fcf949354f59f698175c0da6be8d470c
+    - AWS_DEFAULT_REGION=eu-west-2
+    - CC_TEST_REPORTER_ID=b858d79e55401a444fc6a05cc1c42ba4fcf949354f59f698175c0da6be8d470c
+
 before_script:
-- curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
-  > ./cc-test-reporter
-- chmod +x ./cc-test-reporter
-- "./cc-test-reporter before-build"
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+    > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - "./cc-test-reporter before-build"
+
 script:
-- prospector
-- pytest --cov=virga tests --cov-report xml:coverage.xml
+  - prospector
+  - pytest --cov=virga tests --cov-report xml:coverage.xml
+
 after_script:
-- "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT -t coverage.py"
+  - "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT -t coverage.py"
+
 deploy:
   provider: pypi
+  skip_existing: true
   user: gurdulu
   password:
     secure: TJGwl0UVhD53Cu3dCh2lvEK6+o4HpBd09lWaMaGYagZ2HDevhk0zvL2m0KbQdSdVsnrv0NX1XeWkmG7XsoYw7rIzPKykOVyNwksVsWT6yeG/MHrotGLBjt7KzzcIy3VhAdKdwoSPudzN0UEcB90M6B7hKV4Mux97ZyGvCB/kCYdDu8oatMKxDh9bVo/4ynquD/dwDjUp0ipUxy8YFSSgoTxdhInMl1yScCWWc2Mewarxwixvp16vEgV5pwoKgtTH1dN096N3Ro2HTG3gL0cx9L40PlKgavZh41ICo4dXPkDcwJMURdzGg+00LCwm05YjrtVv09/K6zLE7zGFUpNGzqZhO2QucipuCpxb6+LT9oEeJmNDjhdKGHcvs9UEPOoN0DZvoLcp+WayaYnFRm5BHdlY6GgnPM6tj7msimFoCV4ObNTltHj+bTpXyLUdPTNaf+Xek9RQ9QmUnP0/QSlW1GQ6ll0v+Zcv8mncXzdH3nk8vQd1bsJZb08RgMrBxaIyV+4tIeqxLXGujtH+xT76g8/dQjukkg4iAVAPCZsOCWuzAPWCbQMzNPoesxCNc76Hlml2BmSwPkXz7tk3y6rrD0/GpJWRxet/QKYcsqUzN3ENCyx8k5hY5QHzb/ApwhFfuabRULOhcqmb4+slNi0R6+EB82DosyiSYbFOZwqC6kM=
