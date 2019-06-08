@@ -1,5 +1,5 @@
 include requirements.txt
 include README.rst
-include docs/*.rst
+recursive-include docs *.rst
 include LICENSE.txt
-include virga/providers/*.yaml
+recursive-include virga/providers *.yaml
