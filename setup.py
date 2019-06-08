@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='virga',
-    version='0.0.23',
+    version='0.0.24',
     description='Analysing your Cloud infrastructure before the rain falls to the ground',
     long_description=io.open('README.rst', encoding='utf-8').read(),
     classifiers=[
@@ -12,6 +12,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Software Development :: Quality Assurance',
         'Topic :: Software Development :: Testing',
     ],
@@ -34,4 +35,9 @@ setup(
         'bin/virga-samples',
     ],
     include_package_data=True,
+    package_data={
+        'virga.providers.aws': [
+            'definitions/*.yaml'
+        ]
+    }
 )
