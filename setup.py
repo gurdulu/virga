@@ -24,6 +24,7 @@ setup(
         'virga',
         'virga.providers',
         'virga.providers.aws',
+        'virga.providers.aws.definitions',
     ],
     install_requires=io.open('requirements.txt', encoding='utf-8').readlines(),
     keywords='qa testing cloud aws',
@@ -34,10 +35,5 @@ setup(
         'bin/virga-asserts',
         'bin/virga-samples',
     ],
-    include_package_data=True,
-    package_data={
-        'virga.providers.aws': [
-            'definitions/*.yaml'
-        ]
-    }
+    include_package_data=True
 )
