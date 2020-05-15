@@ -6,7 +6,7 @@ addresses:
   prefix: Addresses
   resource_id: PublicIp
   identifiers:
-    ip:
+    id:
       key: public-ip
       type: filter
     name:

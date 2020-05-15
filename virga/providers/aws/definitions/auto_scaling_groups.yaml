@@ -1,5 +1,5 @@
 ---
-autoscaling_groups:
+auto_scaling_groups:
   client: virga
   action: find_auto_scaling_groups
   context: Auto Scaling Group

@@ -1,3 +1,5 @@
+import sys
+import traceback
 from multiprocessing import Manager
 from multiprocessing.pool import Pool
 import os
@@ -7,7 +9,7 @@ import boto3
 import jmespath
 import yaml
 
-from virga.common import VirgaException
+from virga import VirgaException
 from virga.providers.abstract import AbstractProvider
 from virga.providers.aws.virgaclient import VirgaClient
 
@@ -71,18 +73,31 @@ class Provider(AbstractProvider):
         Requests are sent using the `request` method which starts a separated process.
         When the processes are all concluded, the outcome is logged.
         """
+
         with Manager() as manager:
+            pool_kwargs = {}
+            if self.args.processes is not None:
+                pool_kwargs['processes'] = self.args.processes
+            pool = Pool(**pool_kwargs)
+
             shared_messages = manager.list()
-            pool = Pool()
+            error_callback_messages = []
 
             for resource_section, resource_objects in self.tests.items():
                 definition = self.definitions[resource_section]
                 for resource_object in resource_objects:
-                    pool.apply_async(self.evaluate, (resource_object, definition, shared_messages))
+                    pool.apply_async(
+                        self.evaluate, (resource_object, definition, shared_messages),
+                        error_callback=lambda x: error_callback_messages.append(x)
+                    )
+                    if error_callback_messages:
+                        break
 
             pool.close()
             pool.join()
 
+            if error_callback_messages:
+                raise VirgaException(error_callback_messages[0])
             self.logs(shared_messages)
             self.result(shared_messages)
 

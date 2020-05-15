@@ -1,5 +1,5 @@
 ---
-amis:
+images:
   client: ec2
   action: describe_images
   context: AMI

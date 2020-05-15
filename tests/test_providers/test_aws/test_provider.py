@@ -2,7 +2,7 @@ from unittest import TestCase
 from unittest.mock import patch, call
 
 from tests import MockArgParse, fixture
-from virga.common import VirgaException
+from virga import VirgaException
 from virga.providers.aws import Provider
 from virga.providers.aws.virgaclient import VirgaClient
 
@@ -11,7 +11,7 @@ from virga.providers.aws.virgaclient import VirgaClient
 class TestAWS(TestCase):
     def setUp(self):
         self.arg_parse = MockArgParse(
-            debug=False, silent=True, logfile=None, output='/tmp', definitions=None
+            debug=False, silent=True, logfile=None, output='/tmp', definitions=None, processes=None
         )
         self.provider = Provider(self.arg_parse)
 

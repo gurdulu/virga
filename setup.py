@@ -13,10 +13,11 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Topic :: Software Development :: Quality Assurance',
         'Topic :: Software Development :: Testing',
     ],
-    url='http://github.com/gurdulu/virga',
+    url='https://github.com/gurdulu/virga',
     author='Gurdulù',
     author_email='macgurd@gmail.com',
     license='MIT',
@@ -32,8 +33,8 @@ setup(
     test_suite='nose.collector',
     tests_require=['nose'],
     scripts=[
-        'bin/virga-asserts',
-        'bin/virga-samples',
+        'bin/virga-assert',
+        'bin/virga-sample',
     ],
     include_package_data=True
 )

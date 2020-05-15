@@ -1,0 +1,14 @@
+{
+  "Addresses": [
+    {
+      "InstanceId": "i-01234567",
+      "PublicIp": "1.2.3.4",
+      "AllocationId": "eipalloc-01234567",
+      "AssociationId": "eipassoc-01234567",
+      "Domain": "vpc",
+      "NetworkInterfaceId": "eni-01234567",
+      "NetworkInterfaceOwnerId": "01234567",
+      "PrivateIpAddress": "10.0.0.1"
+    }
+  ]
+}

@@ -2,7 +2,7 @@ import re
 import boto3
 from botocore.exceptions import ClientError
 
-from virga.common import VirgaException
+from virga import VirgaException
 
 
 class VirgaClient:
