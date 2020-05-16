@@ -1,5 +1,5 @@
 ---
-cloudformation:
+cloudformation_stacks:
   client: cloudformation
   action: describe_stacks
   context: Cloud Formation Stacks

@@ -2,7 +2,7 @@
 addresses:
   client: ec2
   action: describe_addresses
-  context: EIP
+  context: Elastic IPs
   prefix: Addresses
   resource_id: PublicIp
   identifiers:

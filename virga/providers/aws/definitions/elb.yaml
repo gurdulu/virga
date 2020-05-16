@@ -2,7 +2,7 @@
 elb:
   client: virga
   action: find_elb
-  context: ELB
+  context: Classic ELB
   prefix: LoadBalancerDescriptions
   resource_id: LoadBalancerName
   identifiers:
