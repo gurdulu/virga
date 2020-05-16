@@ -1,4 +1,4 @@
-vpc_peerings:
+vpc_peering_connections:
   client: ec2
   action: describe_vpc_peering_connections
   context: VPC Peering Connections
