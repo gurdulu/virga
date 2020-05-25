@@ -33,16 +33,19 @@ def read_testfile(testfile_paths: list) -> dict:
     :param testfile_paths: Test configuration filename
     :return: Test structure
     """
-    try:
-        tests = {}
-        for testfile_path in testfile_paths:
+    tests = {}
+
+    for testfile_path in testfile_paths:
+        try:
             with open(testfile_path) as testfile:
-                tests.update(yaml.full_load(testfile))
-        return tests
-    except FileNotFoundError:
-        raise VirgaException('Test file not found')
-    except ParserError:
-        raise VirgaException('Invalid test file')
+                data = yaml.safe_load(testfile)
+                tests.update(data)
+        except FileNotFoundError:
+            raise VirgaException('Test file not found')
+        except ParserError:
+            raise VirgaException('Invalid test file')
+
+    return tests
 
 
 def assert_parser() -> any:

@@ -1,0 +1,11 @@
+---
+route53:
+  client: virga
+  action: find_route53_record
+  context: Route53
+  prefix: ResourceRecordSets
+  resource_id: [Name, Type]
+  identifiers:
+    record:
+      key: [record-name, record-type]
+      type: and

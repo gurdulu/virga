@@ -157,3 +157,22 @@ class VirgaClient:
         group_names = filter(regex.search, group_names)
         groups = [x for x in response['AutoScalingGroups'] if x['AutoScalingGroupName'] in group_names]
         return {'AutoScalingGroups': groups}
+
+    @staticmethod
+    def find_route53_record(resource_object: dict) -> dict:
+        """
+        Call boto3/route53 for finding the detail of a Route53 record.
+
+        :param resource_object: Object filter
+        :return: Response from AWS
+        """
+        client = boto3.client('route53')
+        response = client.list_hosted_zones()
+        hosted_zone = [x['Id'] for x in response['HostedZones'] if x['Name'] == resource_object['record']['record-name']][0]
+        response = client.list_resource_record_sets(HostedZoneId=hosted_zone)
+        filtered = [
+            x for x in response['ResourceRecordSets']
+            if x['Name'].lower() == resource_object['record']['record-name'].lower()
+            and x['Type'].lower() == resource_object['record']['record-type'].lower()
+        ]
+        return {'ResourceRecordSets': filtered}

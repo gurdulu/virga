@@ -90,12 +90,12 @@ identifier = 'tag:Name'
 resource_id = 'my-subnet'
 
 prefix = 'Subnets'
-resource_id = 'SubnetId'
+item_index = 'SubnetId'
 
 obj = boto3.client(client)
-result = getattr(obj, action)(Filters=[{identifier: resource_id}])
+result = getattr(obj, action)(Filters=[{identifier: identifier}])
 
-print(result[prefix][0][resource_id])
+print(result[prefix][0][item_index])
 ```
 
 Summarising I can identify 6 variables that can be set as parameters in an external configuration file.
@@ -157,7 +157,7 @@ instances:
       type: filter
 ```
 
-The code is at [virga/providers/aws/definitions/]().
+The code is at [virga/providers/aws/definitions/](../virga/providers/aws/definitions/).
 
 ## Definitions directory
 

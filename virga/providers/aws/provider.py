@@ -1,5 +1,3 @@
-import sys
-import traceback
 from multiprocessing import Manager
 from multiprocessing.pool import Pool
 import os
@@ -21,48 +19,51 @@ class Provider(AbstractProvider):
         super(Provider, self).__init__(args)
         self.definitions_path = os.path.join(os.path.dirname(__file__), 'definitions')
 
-    def client(self, resource_definition: dict, resource_object: dict) -> dict:
+    def client(self, definition: dict, test: dict) -> dict:
         """
         Entry-point for calling a client.
 
         If the client is virga searches for the custom method.
         If the client is NOT virga searches for the boto3 definition.
 
-        :param resource_definition: Section definition
-        :param resource_object: Object filter
+        :param definition: Section definition
+        :param test: Object filter
         :return: Response from AWS
         """
-        if resource_definition['client'] == 'virga':
+        if definition['client'] == 'virga':
             client = VirgaClient()
-            return getattr(client, resource_definition['action'])(resource_object)
-        client = boto3.client(resource_definition['client'])
-        formatted_filter = self.format_filter(resource_definition, resource_object)
-        return getattr(client, resource_definition['action'])(**formatted_filter)
+            return getattr(client, definition['action'])(test)
+        client = boto3.client(definition['client'])
+        formatted_filter = self.format_filter(definition, test)
+        return getattr(client, definition['action'])(**formatted_filter)
 
-    def evaluate(self, resource_object: dict, resource_definition: dict, shared_messages: list):
+    def evaluate(self, test: dict, definition: dict, shared_messages: list):
         """
         Get the resource information and execute the tests.
 
-        :param resource_object: Resource to analyse
-        :param resource_definition: Resource definition
+        :param test: Test
+        :param definition: Resource definition
         :param shared_messages: List of shared messages
         """
-        response = self.client(resource_definition, resource_object)
-        items = self.flatten_items(response, resource_definition['prefix'])
+        response = self.client(definition, test)
+        items = self.flatten_items(response, definition['prefix'])
 
         # None items are resources not found
         if not items:
             items = [None]
         if any(x is None for x in items):
-            identifier = {k: v for k, v in resource_object.items() if k != 'assertions'}
-            items = [{resource_definition['resource_id']: '%s = %s (RESOURCE NOT FOUND)' % (
+            identifier = {k: v for k, v in test.items() if k != 'assertions'}
+            items = [{definition['resource_id']: '%s = %s (RESOURCE NOT FOUND)' % (
                 next(iter(identifier.keys())),
                 next(iter(identifier.values())))}]
 
         for resource in items:
-            resource_id = resource[resource_definition['resource_id']]
-            for test in resource_object['assertions']:
-                outcome = self.assertion(test, resource_definition['context'], resource, resource_id)
+            if isinstance(definition['resource_id'], list):
+                resource_id = ' - '.join([resource[x] for x in definition['resource_id']])
+            else:
+                resource_id = resource[definition['resource_id']]
+            for test in test['assertions']:
+                outcome = self.assertion(test, definition['context'], resource, resource_id)
                 shared_messages.append(outcome)
 
     def action(self):
@@ -83,11 +84,11 @@ class Provider(AbstractProvider):
             shared_messages = manager.list()
             error_callback_messages = []
 
-            for resource_section, resource_objects in self.tests.items():
-                definition = self.definitions[resource_section]
-                for resource_object in resource_objects:
+            for test_section, tests in self.tests.items():
+                definition = self.definitions[test_section]
+                for test in tests:
                     pool.apply_async(
-                        self.evaluate, (resource_object, definition, shared_messages),
+                        self.evaluate, (test, definition, shared_messages),
                         error_callback=lambda x: error_callback_messages.append(x)
                     )
                     if error_callback_messages:
@@ -118,9 +119,15 @@ class Provider(AbstractProvider):
                 result = {'Filters': [{'Name': identifier['key'], 'Values': [test[filter_key]]}]}
             elif identifier['type'] == 'list':
                 result = {identifier['key']: [test[filter_key]]}
+            elif identifier['type'] == 'and':
+                result = {}
+                for key in identifier['key']:
+                    result[key] = test[filter_key][key]
             return result
         except (KeyError, IndexError):
-            raise VirgaException('Invalid definition')
+            keys = set(test.keys())
+            keys.remove('assertions')
+            raise VirgaException(f"Invalid resource name '{keys.pop()}'")
 
     def flatten_items(self, response: dict, prefix: str) -> list:
         """
@@ -145,10 +152,10 @@ class Provider(AbstractProvider):
         :raises VirgaException: If the resource is not found
         """
         try:
-            resource_definition = self.definitions[section]
-            response = self.client(resource_definition, {identifier: resource_id})
-            items = self.flatten_items(response, resource_definition['prefix'])
-            return items[0][resource_definition['resource_id']]
+            definition = self.definitions[section]
+            response = self.client(definition, {identifier: resource_id})
+            items = self.flatten_items(response, definition['prefix'])
+            return items[0][definition['resource_id']]
         except (KeyError, IndexError):
             raise VirgaException('Lookup %s %s %s failed' % (section, identifier, resource_id))
 

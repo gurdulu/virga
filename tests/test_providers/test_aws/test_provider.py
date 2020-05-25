@@ -53,6 +53,17 @@ class TestAWS(TestCase):
         expected = {'Names': ['resource-name']}
         self.assertDictEqual(expected, self.provider.format_filter(definition, test))
 
+    def test_format_filters_type_and(self, *args):
+        definition = {
+            'identifiers': {
+                'id': {'key': ['resource-name', 'resource-type'], 'type': 'and'},
+                'name': {'key': 'Names', 'type': 'list'}
+            }
+        }
+        test = {'id': {'resource-name': 'resource-name-value', 'resource-type': 'resource-type-value'}}
+        expected = {'resource-name': 'resource-name-value', 'resource-type': 'resource-type-value'}
+        self.assertDictEqual(expected, self.provider.format_filter(definition, test))
+
     def test_format_filters_invalid_configuration(self, *args):
         definition = {
             'identifiers': {
@@ -60,8 +71,8 @@ class TestAWS(TestCase):
                 'name': {'key': 'tag:Name', 'type': 'filter'}
             }
         }
-        test = {'another-key': 'resource-name'}
-        with self.assertRaisesRegex(VirgaException, 'Invalid definition'):
+        test = {'another-key': 'resource-name', 'assertions': []}
+        with self.assertRaisesRegex(VirgaException, "Invalid resource name 'another-key'"):
             self.provider.format_filter(definition, test)
 
     def test_evaluate_no_assertions_calls_aws(self, mock_call):
